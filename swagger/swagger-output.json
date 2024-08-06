@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3001"
     }
   ],
   "paths": {
@@ -98,6 +98,87 @@
                   },
                   "cate_num": {
                     "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },"/users/login": {
+      "post": {
+        "summary": "로그인",
+        "description": "아이디와 비밀번호를 입력해 로그인합니다.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sign_id": {
+                    "type": "string",
+                    "description": "유저아이디",
+                    "example": "test"
+                  },
+                  "user_pwd": {
+                    "type": "string",
+                    "description": "패스워드",
+                    "example": "swuweb123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for authentication",
+                      "example": "your_jwt_token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid sign_id or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
                   }
                 }
               }
