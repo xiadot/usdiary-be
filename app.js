@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require('./swagger/swagger-output.json')
 
-const diaryRoutes = require('./route/diary');
+const diaryRoutes = require('./route/diary'); // 다이어리 라우터
 
 const { sequelize } = require('./models'); // db.sequelize 객체
 
@@ -32,7 +32,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'images')));
 
 // 라우팅
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile)) // docs 대신 swagger로 수정한다.
-app.use('/diary', diaryRoutes);
+app.use('/diaries', diaryRoutes);
+
+// 일기 목록 페이지 제공
+app.get('/diaries', (req, res) => {
+  res.render('diary');
+});
 
 // 404 오류 처리
 app.use((req, res, next) => {
