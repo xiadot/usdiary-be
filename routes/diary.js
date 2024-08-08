@@ -68,6 +68,9 @@ router.get('/:diary_id', renderDiary);
 // user_id를 URL 파라미터로 받도록 설정
 router.post('/', upload.single('post_photo'), createDiary);
 
+//일기 삭제
+router.delete('/:diary_id', deleteDiary);
+
 module.exports = router;
 
 
