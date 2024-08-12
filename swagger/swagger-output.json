@@ -16,6 +16,183 @@
     }
   ],
   "paths": {
+    "/users/login": {
+      "post": {
+        "summary": "로그인",
+        "description": "아이디와 비밀번호를 입력해 로그인합니다.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sign_id": {
+                    "type": "string",
+                    "description": "유저아이디",
+                    "example": "test"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "패스워드",
+                    "example": "swuweb123"
+                  }
+                },
+                "required": ["sign_id", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for authentication",
+                      "example": "your_jwt_token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid sign_id or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/findId": {
+      "post": {
+        "summary": "아이디 찾기",
+        "description": "사용자 이름, 이메일 및 생일을 입력하여 아이디를 찾습니다.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_name": {
+                    "type": "string",
+                    "description": "사용자 이름",
+                    "example": "김슈니"
+                  },
+                  "user_email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "사용자 이메일",
+                    "example": "usdiary@example.com"
+                  },
+                  "user_birthday": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "사용자 생일 (YYYY-MM-DD 형식)",
+                    "example": "2000-01-01"
+                  }
+                },
+                "required": ["user_name", "user_email", "user_birthday"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "사용자의 아이디를 성공적으로 찾았습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "김슈니님의 아이디입니다."
+                    },
+                    "sign_id": {
+                      "type": "string",
+                      "description": "찾은 사용자 아이디",
+                      "example": "usdiary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "사용자 정보와 일치하는 계정을 찾을 수 없습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 정보와 일치하는 계정이 없습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "서버 내부 오류"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/diaries/{diary_id}": {
       "get": {
         "description": "특정 일기를 가져옵니다.",
@@ -204,91 +381,7 @@
           "board_id"
         ]
       }
-    
-    },"/users/login": {
-      "post": {
-        "summary": "로그인",
-        "description": "아이디와 비밀번호를 입력해 로그인합니다.",
-        "tags": [
-          "users"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sign_id": {
-                    "type": "string",
-                    "description": "유저아이디",
-                    "example": "test"
-                  },
-                  "user_pwd": {
-                    "type": "string",
-                    "description": "패스워드",
-                    "example": "swuweb123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful login",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "token": {
-                      "type": "string",
-                      "description": "JWT token for authentication",
-                      "example": "your_jwt_token"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid sign_id or password"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Internal server error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -298,3 +391,4 @@
       }
     }
   }
+}
