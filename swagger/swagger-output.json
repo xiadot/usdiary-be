@@ -147,6 +147,33 @@
           "password"
         ]
       },
+      "FindId": {
+        "type": "object",
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "description": "사용자 이름",
+            "example": "김슈니"
+          },
+          "user_email": {
+            "type": "string",
+            "format": "email",
+            "description": "사용자 이메일",
+            "example": "usdiary@example.com"
+          },
+          "user_birthday": {
+            "type": "string",
+            "format": "date",
+            "description": "사용자 생일 (YYYY-MM-DD 형식)",
+            "example": "2000-01-01"
+          }
+        },
+        "required": [
+          "user_name",
+          "user_email",
+          "user_birthday"
+        ]
+      },
       "Diary": {
         "type": "object",
         "properties": {
