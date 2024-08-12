@@ -48,16 +48,19 @@
         },
         "responses": {
           "200": {
-            "description": "Successful login",
+            "description": "성공적으로 로그인하였습니다.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "로그인 성공 메시지"
+                    },
                     "token": {
                       "type": "string",
-                      "description": "JWT token for authentication",
-                      "example": "your_jwt_token"
+                      "description": "JWT 인증 토큰"
                     }
                   }
                 }
