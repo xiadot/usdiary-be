@@ -1,7 +1,7 @@
 const Diary = require('../models/diary');
 const User = require('../models/user');
 
-
+//일기 조회
 // handlers.js
 exports.renderDiary = async (req, res) => {
   try {
@@ -18,7 +18,7 @@ exports.renderDiary = async (req, res) => {
   }
 };
 
-
+//일기 작성
 exports.createDiary = (req, res) => {
   const newDiary = {
       diary_title: req.body.diary_title,
@@ -79,3 +79,29 @@ exports.updateDiary = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+// 일기 삭제 
+exports.deleteDiary = async (req, res) => {
+    const diaryId = req.params.diary_id;
+
+    try {
+        // 일기가 존재하는지 확인
+        const diary = await Diary.findByPk(diaryId);
+
+        if (!diary) {
+            return res.status(404).json({ message: 'Diary not found' });
+        }
+
+        // 일기 삭제
+        await Diary.destroy({
+            where: {
+                diary_id: diaryId
+            }
+        });
+
+        return res.status(200).json({ message: 'Diary deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting diary:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};

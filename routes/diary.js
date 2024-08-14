@@ -21,6 +21,9 @@ router.get('/:diary_id', renderDiary);
 router.post('/', upload.single('post_photo'), createDiary);
 router.patch('/:diary_id', upload.single('post_photo'), updateDiary);
 
+//일기 삭제
+router.delete('/:diary_id', deleteDiary);
+
 module.exports = router;
 
 
