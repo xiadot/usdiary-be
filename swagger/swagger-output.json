@@ -18,46 +18,33 @@
   "paths": {
     "/users/login": {
       "post": {
-        "summary": "로그인",
-        "description": "아이디와 비밀번호를 입력해 로그인합니다.",
-        "tags": [
-          "users"
-        ],
+        "tags": ["Users"],
+        "description": "사용자가 로그인할 수 있습니다.",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "sign_id": {
-                    "type": "string",
-                    "description": "유저아이디",
-                    "example": "test"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "패스워드",
-                    "example": "swuweb123"
-                  }
-                },
-                "required": ["sign_id", "password"]
+                "$ref": "#/components/schemas/Login"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
-            "description": "Successful login",
+            "description": "성공적으로 로그인하였습니다.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "로그인 성공 메시지"
+                    },
                     "token": {
                       "type": "string",
-                      "description": "JWT token for authentication",
-                      "example": "your_jwt_token"
+                      "description": "JWT 인증 토큰"
                     }
                   }
                 }
@@ -65,136 +52,17 @@
             }
           },
           "401": {
-            "description": "Unauthorized - Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid sign_id or password"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "아이디 또는 비밀번호가 잘못되었습니다."
           },
           "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Internal server error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/findId": {
-      "post": {
-        "summary": "아이디 찾기",
-        "description": "사용자 이름, 이메일 및 생일을 입력하여 아이디를 찾습니다.",
-        "tags": [
-          "users"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_name": {
-                    "type": "string",
-                    "description": "사용자 이름",
-                    "example": "김슈니"
-                  },
-                  "user_email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "사용자 이메일",
-                    "example": "usdiary@example.com"
-                  },
-                  "user_birthday": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "사용자 생일 (YYYY-MM-DD 형식)",
-                    "example": "2000-01-01"
-                  }
-                },
-                "required": ["user_name", "user_email", "user_birthday"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "사용자의 아이디를 성공적으로 찾았습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "김슈니님의 아이디입니다."
-                    },
-                    "sign_id": {
-                      "type": "string",
-                      "description": "찾은 사용자 아이디",
-                      "example": "usdiary"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "사용자 정보와 일치하는 계정을 찾을 수 없습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "사용자 정보와 일치하는 계정이 없습니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "서버 내부 오류",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "서버 내부 오류"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "서버 내부 오류"
           }
         }
       }
     },
     "/diaries/{diary_id}": {
       "get": {
+        "tags": ["Diaries"],
         "description": "특정 일기를 가져옵니다.",
         "parameters": [
           {
@@ -221,6 +89,9 @@
           "404": {
             "description": "일기를 찾을 수 없습니다."
           },
+          "500": {
+            "description": "Internal Server Error"
+          },
           "default": {
             "description": "기타 오류"
           }
@@ -229,6 +100,7 @@
     },
     "/diaries": {
       "post": {
+        "tags": ["Diaries"],
         "description": "새로운 일기를 생성합니다.",
         "requestBody": {
           "content": {
@@ -260,6 +132,24 @@
   },
   "components": {
     "schemas": {
+      "Login": {
+        "type": "object",
+        "properties": {
+          "sign_id": {
+            "type": "string",
+            "description": "사용자 아이디"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "사용자 비밀번호"
+          }
+        },
+        "required": [
+          "sign_id",
+          "password"
+        ]
+      },
       "Diary": {
         "type": "object",
         "properties": {
