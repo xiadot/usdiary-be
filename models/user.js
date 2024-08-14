@@ -46,16 +46,16 @@ class User extends Sequelize.Model {
         },
         user_tendency:{
           type: Sequelize.ENUM('숲','도시'),
-          allowNull: false,
+          allowNull: true,
 
         },
         user_nick:{
           type: Sequelize.STRING(255),
-          allowNull: false,
+          allowNull: true,
         },
         user_point:{
           type: Sequelize.BIGINT,
-          allowNull: false,
+          allowNull: true,
         }
       },
       {
