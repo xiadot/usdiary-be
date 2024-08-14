@@ -56,6 +56,7 @@ class User extends Sequelize.Model {
         user_point:{
           type: Sequelize.BIGINT,
           allowNull: false,
+          defaultValue: 0,
         }
      
       },
