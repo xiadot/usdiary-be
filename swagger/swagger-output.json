@@ -52,10 +52,56 @@
             }
           },
           "401": {
-            "description": "아이디 또는 비밀번호가 잘못되었습니다."
+            "description": "존재하지 않는 아이디입니다. 또는 잘못된 비밀번호입니다."
           },
           "500": {
-            "description": "서버 내부 오류"
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/findID": {
+      "post": {
+        "tags": ["Users"],
+        "description": "사용자가 아이디를 찾을 수 있습니다.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindID"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "아이디 찾기 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "아이디 찾기 성공 메시지",
+                      "example": "김슈니님의 아이디입니다."
+                    },
+                    "sign_id": {
+                      "type": "string",
+                      "description": "찾은 사용자 아이디",
+                      "example": "usdiary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "사용자 정보와 일치하는 계정을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -148,6 +194,29 @@
         "required": [
           "sign_id",
           "password"
+        ]
+      },
+      "FindID": {
+        "type": "object",
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "description": "사용자 이름"
+          },
+          "user_email": {
+            "type": "string",
+            "description": "사용자 이메일"
+          },
+          "user_birthday": {
+            "type": "string",
+            "format": "date",
+            "description": "사용자 생년월일 (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "user_name",
+          "user_email",
+          "user_birthday"
         ]
       },
       "Diary": {
