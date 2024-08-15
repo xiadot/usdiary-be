@@ -37,6 +37,46 @@ exports.createDiary = (req, res) => {
       data: newDiary
   });
 };
+exports.updateDiary = async (req, res) => {
+    const { diary_id } = req.params;
+    const {
+      diary_title,
+      diary_content,
+      diary_cate,
+      access_level,
+      diary_emotion,
+      cate_num,
+    } = req.body;
+  
+    try {
+      // 다이어리 항목 찾기
+      const diary = await Diary.findByPk(diary_id);
+  
+      if (!diary) {
+        return res.status(404).json({ message: 'Diary not found' });
+      }
+  
+      // 다이어리 항목 업데이트
+      const updatedDiary = await diary.update({
+        diary_title: diary_title || diary.diary_title,
+        diary_content: diary_content || diary.diary_content,
+        diary_cate: diary_cate || diary.diary_cate,
+        access_level: access_level || diary.access_level,
+        diary_emotion: diary_emotion || diary.diary_emotion,
+        cate_num: cate_num || diary.cate_num,
+        post_photo: req.file ? req.file.path : diary.post_photo,
+      });
+  
+      // 성공적으로 업데이트된 다이어리 항목 반환
+      res.status(200).json({
+        message: 'Diary updated successfully',
+        data: updatedDiary,
+      });
+    } catch (error) {
+      console.error('Error updating diary:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 
 // 일기 삭제 
 exports.deleteDiary = async (req, res) => {
