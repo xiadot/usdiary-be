@@ -25,8 +25,11 @@ exports.login = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.user_pwd);
 
         if (!isPasswordValid) {
+            console.log('Invalid password.');
             return res.status(401).json({ message: '잘못된 비밀번호입니다.' });
         }
+
+        console.log('Password validated successfully.');
 
         const token = jwt.sign(
             { userId: user.user_id },
