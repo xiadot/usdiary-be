@@ -80,3 +80,49 @@ exports.findId = async (req, res) => {
         });
     }
 };
+
+// 비밀번호 찾기
+const generateTemporaryPassword = () => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+};
+
+exports.findPwd = async (req, res) => {
+    const { user_name, sign_id, user_email } = req.body;
+
+    try {
+        const user = await User.findOne({
+            where: {
+                user_name: user_name,
+                sign_id: sign_id,
+                user_email: user_email
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "사용자 정보와 일치하는 계정이 없습니다."
+            });
+        }
+
+        const temporaryPassword = generateTemporaryPassword();
+        const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+        await user.update({ user_pwd: hashedPassword });
+
+        res.status(200).json({
+            message: `${user_name}님의 임시 비밀번호입니다. 로그인 후 비밀번호를 변경해주세요.`,
+            temporaryPassword: temporaryPassword
+        });
+
+    } catch (error) {
+        console.error('비밀번호 찾기 중 오류 발생:', error);
+        res.status(500).json({
+            message: "서버 내부 오류"
+        });
+    }
+};
