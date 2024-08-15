@@ -44,7 +44,6 @@ exports.updateDiary = async (req, res) => {
       diary_content,
       diary_cate,
       access_level,
-      board_id,
       diary_emotion,
       cate_num,
     } = req.body;
@@ -63,7 +62,6 @@ exports.updateDiary = async (req, res) => {
         diary_content: diary_content || diary.diary_content,
         diary_cate: diary_cate || diary.diary_cate,
         access_level: access_level || diary.access_level,
-        board_id: board_id || diary.board_id,
         diary_emotion: diary_emotion || diary.diary_emotion,
         cate_num: cate_num || diary.cate_num,
         post_photo: req.file ? req.file.path : diary.post_photo,

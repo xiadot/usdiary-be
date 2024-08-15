@@ -11,7 +11,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../multer/multer'); // multer 설정 가져오기
-const { renderDiary,createDiary,updateDiary } = require('../controllers/diary');
+const { renderDiary,createDiary,updateDiary, deleteDiary} = require('../controllers/diary');
 
 // 일기 작성 페이지 렌더링
 

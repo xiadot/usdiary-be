@@ -36,7 +36,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'images')));
 
 // 라우팅
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile)) // docs 대신 swagger로 수정한다.
-app.use('/diary', diaryRoutes);
+app.use('/diaries', diaryRoutes);
 app.use('/users', users);
 
 // 404 오류 처리

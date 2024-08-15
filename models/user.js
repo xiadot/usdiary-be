@@ -51,11 +51,12 @@ class User extends Sequelize.Model {
         },
         user_nick:{
           type: Sequelize.STRING(255),
-          allowNull: true,
+          allowNull: false,
         },
         user_point:{
           type: Sequelize.BIGINT,
           allowNull: false,
+          defaultValue: 0,
         }
       },
       {
