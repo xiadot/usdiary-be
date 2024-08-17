@@ -1,7 +1,9 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
-const SENDER_NAME = 'USDIARY'
 
+const SENDER_NAME = 'USDIARY';
+
+// 이메일 데이터 설정 함수
 const getEmailData = (to, authCode) => {
     return {
         from: `${SENDER_NAME} <${process.env.EMAIL_USER}>`, 
@@ -11,7 +13,8 @@ const getEmailData = (to, authCode) => {
     };
 };
 
-const sendVerificationEmail = async (to, authCode) => {
+// 이메일 인증 코드 전송 함수
+exports.sendVerificationEmail = async (to, authCode) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
@@ -35,5 +38,3 @@ const sendVerificationEmail = async (to, authCode) => {
         console.error('이메일 전송에 오류가 있습니다.:', error);
     }
 };
-
-module.exports = { sendVerificationEmail };

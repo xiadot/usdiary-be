@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const {
-    sendVerificationEmail,
     sendVerificationCode,
     verifyCode, 
     register,
-    checkid,
-    duplication
+    checkId,
+    checkNickname
 } = require('../controllers/register'); 
+const {
+    sendVerificationEmail
+} = require('../utils/mail'); 
+
 
 // 회원 가입
 router.post('/register', register);
@@ -22,9 +25,9 @@ router.post('/send-verification-code', sendVerificationCode);
 router.post('/verify-code', verifyCode); 
 
 // 아이디 중복 확인
-router.get('/idcheck', checkid);
+router.get('/idcheck', checkId);
 
-// 중복 확인
-router.post('/duplication', duplication);
+// 닉네임 중복 확인
+router.get('/nicknamecheck',checkNickname);
 
 module.exports = router;

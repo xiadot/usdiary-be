@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const validator = require('validator');
 const { User } = require('../models');
 const { sendVerificationEmail } = require('../utils/mail'); 
-const { Op } = require('sequelize');
 
 const verificationCodes = new Map();
 
@@ -13,7 +12,7 @@ const validateEmail = (email) => {
 };
 
 // 이메일 인증 코드 전송
-const sendVerificationCode = async (req, res) => {
+exports.sendVerificationCode = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
@@ -45,7 +44,7 @@ const sendVerificationCode = async (req, res) => {
 };
 
 // 인증 코드 확인
-const verifyCode = async (req, res) => {
+exports.verifyCode = async (req, res) => {
     const { email, verificationCode } = req.body;
 
     if (!email || !verificationCode) {
@@ -76,10 +75,10 @@ const verifyCode = async (req, res) => {
 };
 
 // 회원 가입
-const register = async (req, res) => {
-    const { email, password, userName, verificationCode, confirmPassword, phone, birthdate, gender } = req.body;
+exports.register = async (req, res) => {
+    const { userId, userNickname, email, password, userName, verificationCode, confirmPassword, phone, birthdate, gender } = req.body;
 
-    if (!email || !password || !userName || !verificationCode || !confirmPassword || !phone || !birthdate || !gender) {
+    if (!userId || !userNickname || !email || !password || !userName || !verificationCode || !confirmPassword || !phone || !birthdate || !gender) {
         return res.status(400).json({ message: '모든 필드를 입력해야 합니다.' });
     }
 
@@ -106,8 +105,9 @@ const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await User.create({
-            sign_id: userName,
+        await User.create({
+            sign_id: userId,
+            user_nick: userNickname,
             user_pwd: hashedPassword,
             user_email: email,
             user_name: userName,
@@ -123,9 +123,8 @@ const register = async (req, res) => {
     }
 };
 
-
 // 아이디 중복 확인
-const checkid = async (req, res) => {
+exports.checkId = async (req, res) => {
     const { uid } = req.query;
 
     if (!uid) {
@@ -137,11 +136,8 @@ const checkid = async (req, res) => {
     try {
         const existingUser = await User.findOne({
             where: {
-                [Op.or]: [
-                    { sign_id: decodedUid },
-                    { user_nick: decodedUid }
-                ]
-            }
+                sign_id: decodedUid
+            } 
         });
 
         if (existingUser) {
@@ -154,32 +150,30 @@ const checkid = async (req, res) => {
     }
 };
 
-// 중복 확인
-const duplication = async (req, res) => {
-    const { email, userName } = req.body;
+// 닉네임 중복 확인
+exports.checkNickname = async (req, res) => {
+    const { unick } = req.query;
+
+    if (!unick) {
+        return res.status(400).json({ message: '닉네임을 입력하세요.' });
+    }
+
+    const decodedUnick = decodeURIComponent(unick);
 
     try {
-        const existingUser = await User.findOne({ where: { user_email: email } });
+        const existingUser = await User.findOne({
+            where: {
+                user_nick: decodedUnick
+            }
+        });
+
         if (existingUser) {
-            return res.status(400).json({ message: '이미 사용 중인 이메일입니다.' });
+            return res.status(400).json({ message: '이미 사용 중인 닉네임입니다.' });
         }
 
-        const existingUserName = await User.findOne({ where: { sign_id: userName } });
-        if (existingUserName) {
-            return res.status(400).json({ message: '이미 사용 중인 사용자 이름입니다.' });
-        }
-
-        res.status(200).json({ message: '사용 가능한 이메일과 사용자 이름입니다.' });
+        res.status(200).json({ message: '사용 가능한 닉네임입니다.' });
     } catch (error) {
         res.status(500).json({ message: '서버 오류가 발생했습니다.', error: error.message });
     }
 };
 
-module.exports = {
-    register,
-    sendVerificationCode,
-    verifyCode, 
-    checkid,
-    duplication,
-    sendVerificationEmail
-};
