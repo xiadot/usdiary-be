@@ -16,9 +16,146 @@
     }
   ],
   "paths": {
+    "/users/login": {
+      "post": {
+        "tags": ["Users"],
+        "description": "사용자가 로그인할 수 있습니다.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공적으로 로그인하였습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "로그인 성공 메시지"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT 인증 토큰"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "존재하지 않는 아이디입니다. 또는 잘못된 비밀번호입니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/findID": {
+      "post": {
+        "tags": ["Users"],
+        "description": "사용자가 아이디를 찾을 수 있습니다.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindID"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "아이디 찾기 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "아이디 찾기 성공 메시지",
+                      "example": "김슈니님의 아이디입니다."
+                    },
+                    "sign_id": {
+                      "type": "string",
+                      "description": "찾은 사용자 아이디",
+                      "example": "usdiary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "사용자 정보와 일치하는 계정을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/findPwd": {
+      "post": {
+        "tags": ["Users"],
+        "description": "사용자가 비밀번호를 찾을 수 있습니다.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindPwd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "비밀번호 찾기 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "비밀번호 찾기 성공 메시지",
+                      "example": "김슈니님의 임시 비밀번호입니다. 로그인 후 비밀번호를 변경해주세요."
+                    },
+                    "temporaryPassword": {
+                      "type": "string",
+                      "description": "임시 비밀번호",
+                      "example": "erwedf13hki!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "사용자 정보와 일치하는 계정을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/diaries/{diary_id}": {
       "get": {
         "description": "특정 일기를 가져옵니다.",
+        "tags": ["diary"],
         "parameters": [
           {
             "name": "diary_id",
@@ -44,8 +181,54 @@
           "404": {
             "description": "일기를 찾을 수 없습니다."
           },
+          "500": {
+            "description": "Internal Server Error"
+          },
           "default": {
             "description": "기타 오류"
+          }
+        }
+      },
+      "patch": {
+        "description": "특정 일기를 수정합니다.",
+        "tags": ["diary"],
+        "parameters": [
+          {
+            "name": "diary_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/DiaryUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공적으로 일기가 수정되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Diary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "일기를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -53,6 +236,7 @@
     "/diaries": {
       "post": {
         "description": "새로운 일기를 생성합니다.",
+        "tags": ["diary"],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -83,6 +267,66 @@
   },
   "components": {
     "schemas": {
+      "Login": {
+        "type": "object",
+        "properties": {
+          "sign_id": {
+            "type": "string",
+            "description": "사용자 아이디"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "사용자 비밀번호"
+          }
+        },
+        "required": ["sign_id", "password"]
+      },
+      "FindID": {
+        "type": "object",
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "description": "사용자 이름"
+          },
+          "user_email": {
+            "type": "string",
+            "description": "사용자 이메일"
+          },
+          "user_birthday": {
+            "type": "string",
+            "format": "date",
+            "description": "사용자 생년월일 (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "user_name",
+          "user_email",
+          "user_birthday"
+        ]
+      },
+      "FindPwd": {
+        "type": "object",
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "description": "사용자 이름"
+          },
+          "sign_id": {
+            "type": "string",
+            "description": "사용자 아이디"
+          },
+          "user_email": {
+            "type": "string",
+            "description": "사용자 이메일"
+          }
+        },
+        "required": [
+          "user_name",
+          "sign_id",
+          "user_email"
+        ]
+      },
       "Diary": {
         "type": "object",
         "properties": {
@@ -197,98 +441,45 @@
             "description": "게시물 사진"
           }
         },
-        "required": [
-          "diary_title",
-          "diary_content",
-          "access_level",
-          "board_id"
-        ]
-      }
-    
-    },"/users/login": {
-      "post": {
-        "summary": "로그인",
-        "description": "아이디와 비밀번호를 입력해 로그인합니다.",
-        "tags": [
-          "users"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sign_id": {
-                    "type": "string",
-                    "description": "유저아이디",
-                    "example": "test"
-                  },
-                  "user_pwd": {
-                    "type": "string",
-                    "description": "패스워드",
-                    "example": "swuweb123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful login",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "token": {
-                      "type": "string",
-                      "description": "JWT token for authentication",
-                      "example": "your_jwt_token"
-                    }
-                  }
-                }
-              }
-            }
+        "required": ["diary_title", "diary_content", "access_level", "board_id"]
+      },
+      "DiaryUpdate": {
+        "type": "object",
+        "properties": {
+          "diary_title": {
+            "type": "string",
+            "description": "일기 제목"
           },
-          "401": {
-            "description": "Unauthorized - Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid sign_id or password"
-                    }
-                  }
-                }
-              }
-            }
+          "diary_content": {
+            "type": "string",
+            "description": "일기 내용"
           },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Internal server error"
-                    }
-                  }
-                }
-              }
-            }
+          "diary_cate": {
+            "type": "string",
+            "description": "일기 카테고리"
+          },
+          "access_level": {
+            "type": "integer",
+            "description": "접근 수준 (0: public, 1: private, 2: friend)"
+          },
+
+          "diary_emotion": {
+            "type": "string",
+            "description": "감정"
+          },
+          "cate_num": {
+            "type": "integer",
+            "format": "int64",
+            "description": "카테고리 번호"
+          },
+          "post_photo": {
+            "type": "string",
+            "format": "binary",
+            "description": "게시물 사진"
           }
         }
       }
-    }
-  },
-
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -298,3 +489,4 @@
       }
     }
   }
+}
