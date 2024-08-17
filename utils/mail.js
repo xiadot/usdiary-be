@@ -14,7 +14,7 @@ const getEmailData = (to, authCode) => {
 };
 
 // 이메일 인증 코드 전송 함수
-exports.sendVerificationEmail = async (to, authCode) => {
+exports.sendVerificationEmail = async (to, authCode) => {a
     try {
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
