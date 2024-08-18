@@ -7,11 +7,18 @@
 // responses: 에는 응답에 관한 사항을 기록해줍니다.
 
 
-
 const express = require('express');
 const router = express.Router();
 const upload = require('../multer/multer'); // multer 설정 가져오기
-const { renderDiary,createDiary,updateDiary, deleteDiary} = require('../controllers/diary');
+const { sortDiary, sortDiaryViews, sortDiaryLikes, renderDiary,createDiary,updateDiary, deleteDiary } = require('../controllers/diary');
+
+// 일기 목록 페이지 렌더링 (최신순)
+router.get('/', sortDiary);
+// (조회수 높은순)
+router.get('/views', sortDiaryViews);
+// (좋아요 높은순)
+router.get('/likes', sortDiaryLikes);
+
 
 // 일기 작성 페이지 렌더링
 
