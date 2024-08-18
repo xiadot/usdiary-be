@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
 const dotenv = require('dotenv');
+const { google } = require('googleapis');
 
 dotenv.config();
 
@@ -124,5 +125,88 @@ exports.findPwd = async (req, res) => {
         res.status(500).json({
             message: "서버 내부 오류"
         });
+    }
+};
+
+// Google 로그인 페이지로 리디렉션
+exports.getLoginPage = (req, res) => {
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        "http://localhost:3001/users/login/google/callback" // Redirect URI
+    );
+
+    const authUrl = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email']
+    });
+
+    res.redirect(authUrl);
+};
+
+
+// Google OAuth 2.0 콜백 처리
+exports.googleCallback = async (req, res) => {
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            "http://localhost:3001/users/login/google/callback"
+        );
+
+        // 인증 코드 확인
+        console.log('Google OAuth 2.0 Authorization Code:', req.query.code);
+        
+        const { tokens } = await oauth2Client.getToken(req.query.code);
+        oauth2Client.setCredentials(tokens);
+
+        const oauth2 = google.oauth2({
+            auth: oauth2Client,
+            version: 'v2',
+        });
+
+        const userInfo = await oauth2.userinfo.get();
+        const { email, name, given_name } = userInfo.data;
+
+        // 데이터베이스에서 해당 이메일을 가진 사용자 확인
+        let user = await User.findOne({ where: { user_email: email } });
+
+        if (user) {
+            // 이미 Google 계정으로 가입된 사용자일 때 로그인 처리
+            console.log('Google 계정으로 이미 가입된 사용자입니다:', user.user_email);
+
+            const token = jwt.sign(
+                { userId: user.user_id },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' } // 토큰 24시간 만료
+            );
+
+            res.status(200).json({ message: 'Google 로그인 성공', token });
+        } else {
+            // 신규 사용자로 데이터베이스에 저장
+            const newUser = await User.create({
+                user_email: email,
+                user_name: name || given_name,
+                sign_id: `google_${userInfo.data.id}`, // Google 계정의 고유 ID를 sign_id로 사용
+                user_pwd: 'google_auth', // 더미 데이터 저장
+                user_gender: 1, //기본값설정
+                user_birthday: '2000-01-01', //기본값설정
+                user_nick: '어스' //기본값설정
+            });
+
+            console.log('신규 사용자로 Google 계정 등록:', newUser.user_email);
+
+            const token = jwt.sign(
+                { userId: newUser.user_id },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' } // 토큰 24시간 만료
+            );
+
+            res.status(201).json({ message: 'Google 계정으로 신규 가입 및 로그인 성공', token });
+        }
+
+    } catch (error) {
+        console.error('Google OAuth 2.0 콜백 처리 중 오류 발생:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
