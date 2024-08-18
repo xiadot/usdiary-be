@@ -1,5 +1,6 @@
 const Diary = require('../models/diary');
 const User = require('../models/user');
+const Board = require('../models/board');
 
 //일기 조회
 // handlers.js
@@ -103,3 +104,56 @@ exports.deleteDiary = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+exports.sortDiary = async (req, res, next) => {
+  try {
+      const diaries = await Diary.findAll({
+          include: {
+              model: User,
+              attributes: ['user_id'],
+          },
+          order: [['createdAt', 'DESC']],
+      });
+      console.log(diaries);
+      res.json(diaries); // res.render 대신 res.json 사용
+  } catch (error) {
+    console.error('Error sorting diary:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+exports.sortDiaryViews = async (req, res, next) => {
+  try {
+      const diaries = await Diary.findAll({
+        include: [
+          { model: User, attributes: ['user_id'] },
+          { model: Board, attributes: ['board_name'] },
+        ],
+        order: [['view_count', 'DESC']]
+      });
+  
+      console.log(diaries);
+      res.json(diaries);
+  } catch (error) {
+    console.error('Error sorting diary:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+exports.sortDiaryLikes = async (req, res, next) => {
+  try {
+      const diaries = await Diary.findAll({
+        include: [
+          { model: User, attributes: ['user_id'] },
+          { model: Board, attributes: ['board_name'] },
+        ],
+        order: [['like_count', 'DESC']]
+      });
+  
+      console.log(diaries); // console 에 안뜸
+      res.json(diaries);
+  } catch (error) {
+    console.error('Error sorting diary:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
