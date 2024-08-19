@@ -128,11 +128,17 @@ exports.findPwd = async (req, res) => {
     }
 };
 
-// 유저 성향 선택(변경)
+// 유저 성향 업데이트
 exports.updateTendency = async (req, res) => {
     try {
         const { user_id } = req.params; 
         const { user_tendency } = req.body; 
+
+        const decoded = res.locals.decoded;
+
+        if (decoded.userId !== parseInt(user_id, 10)) {
+            return res.status(403).json({ message: '잘못된 사용자 ID입니다.' });
+        }
 
         // 유저 확인
         const user = await User.findByPk(user_id);
