@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diary List</title>
+    <link rel="stylesheet" href="/path/to/your/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Diary List</h1>
+        <% if (diaries.length > 0) { %>
+            <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>User ID</th>
+                    <th>Board Name</th>
+                    <th>Created At</th>
+                    <th>Access Level</th>
+                    <th>View Count</th>
+                    <th>Like Count</th>
+                    <th>Post Photo</th>
+                    <th>Diary Emotion</th>
+                    <th>Category Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% diaries.forEach(diary => { %>
+                    <tr>
+                      <td><%= diary.diary_id %></td>
+                      <td><%= diary.diary_title %></td>
+                      <td><%= diary.diary_content %></td>
+                      <td><%= diary.user_id %></td>
+                      <td><%= diary.Board.board_name %></td>
+                      <td><%= diary.createdAt.toDateString() %></td>
+                      <td><%= diary.access_level %></td>
+                      <td><%= diary.view_count %></td>
+                      <td><%= diary.like_count %></td>
+                      <td><%= diary.diary_emotion %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+        <% } else { %>
+            <p>No diaries found.</p>
+        <% } %>
+    </div>
+</body>
+</html>
