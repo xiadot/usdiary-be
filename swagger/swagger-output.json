@@ -152,6 +152,72 @@
         }
       }
     },
+    "/users/login/google/callback": {
+      "get": {
+        "tags": ["Users"],
+        "description": "Google OAuth 2.0 인증 후 리디렉션된 요청을 처리하여 사용자를 로그인시키거나, 신규 사용자인 경우 데이터베이스에 저장한 후 로그인 처리합니다.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Google OAuth 2.0 인증 후 제공되는 인증 코드"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Google 로그인 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "로그인 성공 메시지",
+                      "example": "Google 로그인 성공"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT 인증 토큰",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Google 계정으로 신규 가입 및 로그인 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "신규 가입 성공 메시지",
+                      "example": "Google 계정으로 신규 가입 및 로그인 성공"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT 인증 토큰",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/diaries/{diary_id}": {
       "get": {
         "description": "특정 일기를 가져옵니다.",
