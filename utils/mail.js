@@ -6,7 +6,7 @@ const SENDER_NAME = 'USDIARY';
 // 이메일 데이터 설정 함수
 const getEmailData = (to, authCode) => {
     return {
-        from: `${SENDER_NAME} <${process.env.EMAIL_USER}>`, 
+        from: '"USDIARY" <swuweb0320@gmail.com >', 
         to: to,
         subject: 'USDIARY 이메일 인증코드',
         html: `<p>인증코드는 <strong>${authCode}</strong> 입니다.</p>`
@@ -14,12 +14,12 @@ const getEmailData = (to, authCode) => {
 };
 
 // 이메일 인증 코드 전송 함수
-exports.sendVerificationEmail = async (to, authCode) => {a
+exports.sendVerificationEmail = async (to, authCode) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
             auth: {
-                user: process.env.EMAIL_USER,
+                user: 'swuweb0320@gmail.com ',
                 pass: process.env.EMAIL_PASS
             }
         });

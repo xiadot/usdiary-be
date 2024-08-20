@@ -1,31 +1,24 @@
 {
-  "development": {
-    "username": "root",
-<<<<<<< HEAD
-    "password": "J1h2g3f4!",
-=======
-    "password": "jybtob0321^^",
->>>>>>> ac713f9af8435363157338b3bac6a46525a926e3
-    "database": "usdiary",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "development": {
+      "username": "root",
+      "password": "J1h2g3f4!",
+      "database": "usdiary",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "test": {
+      "username": "root",
+      "password": null,
+      "database": "database_test",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "production": {
+      "username": "root",
+      "password": null,
+      "database": "database_production",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
   }
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> ac713f9af8435363157338b3bac6a46525a926e3
+  

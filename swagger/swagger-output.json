@@ -18,6 +18,7 @@
   "paths": {
   "/users/register": {
     "post": {
+      "summary": "회원가입",
       "tags": ["Users"],
       "description": "새로운 사용자를 등록합니다.",
       "requestBody": {
@@ -57,7 +58,318 @@
       }
     }
   },
-    "/users/login": {
+  "/users/verify-email": {
+      "post": {
+        "summary": "이메일 인증",
+        "description": "사용자의 이메일로 인증 코드를 전송합니다.",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "이메일이 성공적으로 전송되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "이메일이 성공적으로 전송되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "유효하지 않은 이메일 주소입니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "유효하지 않은 이메일 주소입니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류로 인해 이메일 전송에 실패했습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "이메일 전송에 실패했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/send-verification-code": {
+      "post": {
+        "summary": "이메일 인증 코드 전송",
+        "description": "사용자의 이메일로 인증 코드를 전송합니다.",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "인증 코드가 성공적으로 전송되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "이메일을 확인하세요."
+                    },
+                    "verificationCode": {
+                      "type": "string",
+                      "example": "abc123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청이 잘못되었습니다. 이메일 입력 또는 유효성에 문제가 있습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "examples": {
+                        "missingEmail": "이메일을 입력하세요.",
+                        "invalidEmail": "유효하지 않은 이메일 주소입니다.",
+                        "emailExists": "이미 등록된 이메일입니다."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류로 인해 이메일 전송에 실패했습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "이메일 인증 중 오류가 발생했습니다."
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/verify-code": {
+      "post": {
+        "summary": "인증 코드 확인",
+        "description": "이메일로 전송된 인증 코드를 확인합니다.",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "verificationCode": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                },
+                "required": ["email", "verificationCode"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "인증 코드가 성공적으로 확인되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "인증번호가 확인되었습니다. 회원 가입을 계속 진행하세요."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "유효하지 않은 인증 코드 또는 입력 누락이 있습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "examples": {
+                        "missingFields": "이메일과 인증번호를 입력하세요.",
+                        "noStoredCode": "이메일에 대한 인증번호가 없습니다.",
+                        "invalidCode": "인증번호가 일치하지 않습니다.",
+                        "expiredCode": "인증번호가 만료되었습니다."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류가 발생했습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/idcheck": {
+      "get": {
+        "summary": "아이디 중복 확인",
+        "description": "아이디의 중복 여부를 확인합니다.",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "uid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "user123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "아이디 사용 가능"
+          },
+          "400": {
+            "description": "이미 사용 중인 아이디입니다."
+          }
+        }
+      }
+    },
+    "/users/nicknamecheck": {
+      "get": {
+        "summary": "닉네임 중복 확인",
+        "description": "닉네임의 중복 여부를 확인합니다.",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "unick",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "nickname123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "닉네임 사용 가능"
+          },
+          "400": {
+            "description": "이미 사용 중인 닉네임입니다."
+          }
+        }
+      }
+    },  
+  "/users/login": {
       "post": {
         "tags": ["Users"],
         "description": "사용자가 로그인할 수 있습니다.",
