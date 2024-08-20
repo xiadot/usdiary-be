@@ -128,6 +128,47 @@ exports.findPwd = async (req, res) => {
     }
 };
 
+// 유저 성향 업데이트
+exports.updateTendency = async (req, res) => {
+    try {
+        const { user_id } = req.params; 
+        const { user_tendency } = req.body; 
+
+        const decoded = res.locals.decoded;
+
+        if (decoded.userId !== parseInt(user_id, 10)) {
+            return res.status(403).json({ message: '잘못된 사용자 ID입니다.' });
+        }
+
+        // 유저 확인
+        const user = await User.findByPk(user_id);
+        console.log('User found:', user);
+
+        if (!user) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 유저 가입 후 경과 일수 계산
+        const createdAt = new Date(user.createdAt); 
+        const now = new Date(); 
+
+        const diffTime = now - createdAt; 
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+
+        if (diffDays > 7) {
+            return res.status(403).json({ message: '가입 후 7일 이내에만 성향을 변경할 수 있습니다.' });
+        }
+
+        user.user_tendency = user_tendency;
+        await user.save();
+
+        return res.status(200).json({ message: '성향이 성공적으로 수정되었습니다.', user });
+    } catch (error) {
+        console.error('유저 성향 선택 중 오류발생', error);
+        return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+};
+
 // Google 로그인 페이지로 리디렉션
 exports.getLoginPage = (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
