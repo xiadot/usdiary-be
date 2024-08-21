@@ -7,7 +7,7 @@ exports.renderComments = async (req, res) => {
   try {
       const diaryId = req.params.diary_id;
 
-      // 해당 일기에 대한 댓글을 모두 조회
+      // 해당 일기에 대한 모든 댓글을 조회
       const comments = await Comment.findAll({
           where: { diary_id: diaryId },
           include: [
@@ -39,7 +39,6 @@ exports.deleteComment = async (req, res) => {
           return res.status(404).json({ message: 'Comment not found' });
       }
 
-      // 댓글 삭제
       await Comment.destroy({
           where: {
               comment_id: commentId

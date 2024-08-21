@@ -627,7 +627,7 @@
     },
     "/comments/{diary_id}/comments": {
   "get": {
-    "tags": ["Comments"],
+    "tags": ["comments"],
     "description": "특정 일기에 대한 모든 댓글을 조회합니다.",
     "parameters": [
       {
@@ -704,7 +704,7 @@
 },
 "/comments/{comment_id}": {
   "delete": {
-    "tags": ["Comments"],
+    "tags": ["comments"],
     "description": "특정 댓글을 삭제합니다.",
     "parameters": [
       {
