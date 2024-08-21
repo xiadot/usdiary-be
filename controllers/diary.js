@@ -104,8 +104,6 @@ exports.deleteDiary = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
-<<<<<<< HEAD
-=======
 
 exports.sortDiary = async (req, res, next) => {
   try {
@@ -159,4 +157,3 @@ exports.sortDiaryLikes = async (req, res, next) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
->>>>>>> e8606e92938458901dad39cc980bbb560df5001b

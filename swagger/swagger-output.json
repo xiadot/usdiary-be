@@ -16,10 +16,10 @@
     }
   ],
   "paths": {
-  "/users/register": {
+  "/register/register": {
     "post": {
       "summary": "회원가입",
-      "tags": ["Users"],
+      "tags": ["register"],
       "description": "새로운 사용자를 등록합니다.",
       "requestBody": {
         "content": {
@@ -58,11 +58,11 @@
       }
     }
   },
-  "/users/verify-email": {
+  "/register/verify-email": {
       "post": {
         "summary": "이메일 인증",
         "description": "사용자의 이메일로 인증 코드를 전송합니다.",
-        "tags": ["Users"],
+        "tags": ["register"],
         "requestBody": {
           "required": true,
           "content": {
@@ -132,11 +132,11 @@
         }
       }
     },
-    "/users/send-verification-code": {
+    "/register/send-verification-code": {
       "post": {
         "summary": "이메일 인증 코드 전송",
         "description": "사용자의 이메일로 인증 코드를 전송합니다.",
-        "tags": ["Users"],
+        "tags": ["register"],
         "requestBody": {
           "required": true,
           "content": {
@@ -218,11 +218,11 @@
         }
       }
     },
-    "/users/verify-code": {
+    "/register/verify-code": {
       "post": {
         "summary": "인증 코드 확인",
         "description": "이메일로 전송된 인증 코드를 확인합니다.",
-        "tags": ["Users"],
+        "tags": ["register"],
         "requestBody": {
           "required": true,
           "content": {
@@ -317,11 +317,11 @@
         }
       }
     },
-    "/users/idcheck": {
+    "/register/idcheck": {
       "get": {
         "summary": "아이디 중복 확인",
         "description": "아이디의 중복 여부를 확인합니다.",
-        "tags": ["Users"],
+        "tags": ["register"],
         "parameters": [
           {
             "in": "query",
@@ -343,11 +343,11 @@
         }
       }
     },
-    "/users/nicknamecheck": {
+    "/register/nicknamecheck": {
       "get": {
         "summary": "닉네임 중복 확인",
         "description": "닉네임의 중복 여부를 확인합니다.",
-        "tags": ["Users"],
+        "tags": ["register"],
         "parameters": [
           {
             "in": "query",
