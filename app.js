@@ -9,6 +9,7 @@ const cors = require('cors');
 const diaryRoutes = require('./routes/diary');
 const userRoutes = require('./routes/users'); 
 const registerRoutes = require('./routes/register'); 
+const commentRoutes = require('./routes/comment'); 
 
 const { sequelize } = require('./models'); // db.sequelize 객체
 
@@ -40,6 +41,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile)) // docs 대�
 app.use('/diaries', diaryRoutes);
 app.use('/users', userRoutes);
 app.use('/register', registerRoutes);
+app.use('/comments', commentRoutes);
 
 // 404 오류 처리
 app.use((req, res, next) => {
