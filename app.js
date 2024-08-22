@@ -6,8 +6,9 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require('./swagger/swagger-output.json')
 const cors = require('cors');
 
-//const diaryRoutes = require('./route/diary');
-const users = require('./routes/users'); 
+const diaryRoutes = require('./routes/diary');
+const userRoutes = require('./routes/users'); 
+const registerRoutes = require('./routes/register'); 
 
 const { sequelize } = require('./models'); // db.sequelize 객체
 
@@ -36,8 +37,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'images')));
 
 // 라우팅
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile)) // docs 대신 swagger로 수정한다.
-//app.use('/diary', diaryRoutes);
-app.use('/users', users);
+app.use('/diaries', diaryRoutes);
+app.use('/users', userRoutes);
+app.use('/register', registerRoutes);
 
 // 404 오류 처리
 app.use((req, res, next) => {

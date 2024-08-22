@@ -45,7 +45,6 @@
         .message.valid {
             color: green;
         }
-
         .message.error {
             color: red;
         }
@@ -55,13 +54,18 @@
 <body>
     <h1>회원가입</h1>
     <form id="registerForm">
-        <label for="name">이름:</label>
-        <input type="text" id="name" name="name" value="<%= typeof name !== 'undefined' ? name : '' %>" required>
+        <label for="username">이름:</label>
+        <input type="text" id="username" name="username" value="<%= typeof name !== 'undefined' ? name : '' %>" required>
         
-        <label for="username">아이디:</label>
+        <label for="id">아이디:</label>
         <div class="button-group">
-            <input type="text" id="username" name="username" value="<%= typeof username !== 'undefined' ? username : '' %>" required>
-            <button type="button" onclick="checkUsername()">중복 확인</button>
+            <input type="text" id="id" name="id" value="<%= typeof username !== 'undefined' ? username : '' %>" required>
+            <button type="button" onclick="checkId()">중복 확인</button>
+        </div>
+        <label for="nickname">닉네임:</label>
+        <div class="button-group">
+            <input type="text" id="nickname" name="nickname" required>
+            <button type="button" onclick="checkNickname()">중복 확인</button>
         </div>
 
         <label for="password">비밀번호:</label>
@@ -100,6 +104,7 @@
     </form>
 
     <script>
+        // 비밀번호 확인 로직 유지
         document.getElementById('confirm-password').addEventListener('input', function() {
     const password = document.getElementById('password').value;
     const confirmPassword = this.value;
@@ -116,112 +121,135 @@
     }
 });
 
+const BASE_URL = '<%= BASE_URL %>'; 
+let isIdChecked = false;
+let isNicknameChecked = false;
+let isEmailVerified = false;
 
-        const BASE_URL = '<%= BASE_URL %>';
+function checkId() {
+    const id = document.getElementById('id').value;
+    if (!id) {
+        alert('아이디를 입력하세요.');
+        return;
+    }
 
-        let isUsernameChecked = false;
-        let isEmailVerified = false;
-
-        function checkUsername() {
-            const username = document.getElementById('username').value;
-            if (!username) {
-                alert('아이디를 입력하세요.');
-                return;
+    fetch(`${BASE_URL}/api/users/idcheck?uid=${encodeURIComponent(id)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === '사용 가능한 아이디입니다.') {
+                isIdChecked = true;
+                alert('사용 가능한 아이디입니다.');
+            } else {
+                isIdChecked = false;
+                alert('이미 중복된 아이디가 있습니다.');
             }
+        })
+        .catch(error => {
+            console.error('아이디 중복 확인 오류:', error);
+            alert('아이디 중복 확인 중 문제가 발생했습니다.');
+        });
+}
 
-            fetch(`${BASE_URL}/api/users/idcheck?uid=${encodeURIComponent(username)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === '사용 가능한 아이디입니다.') {
-                        isUsernameChecked = true;
-                        alert('사용 가능한 아이디입니다.');
-                    } else {
-                        isUsernameChecked = false;
-                        alert('이미 중복된 아이디가 있습니다.');
-                    }
-                })
-                .catch(error => {
-                    console.error('아이디 중복 확인 오류:', error);
-                    alert('아이디 중복 확인 중 문제가 발생했습니다.');
-                });
-        }
+function checkNickname() {
+    const nickname = document.getElementById('nickname').value;
+    if (!nickname) {
+        alert('닉네임을 입력하세요.');
+        return;
+    }
 
-        function sendVerificationEmail() {
-            const email = document.getElementById('email').value;
-            if (!email) {
-                alert('이메일을 입력하세요.');
-                return;
+    fetch(`${BASE_URL}/api/users/nicknamecheck?unick=${encodeURIComponent(nickname)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === '사용 가능한 닉네임입니다.') {
+                isNicknameChecked = true;
+                alert('사용 가능한 닉네임입니다.');
+            } else {
+                isNicknameChecked = false;
+                alert('이미 사용 중인 닉네임입니다.');
             }
+        })
+        .catch(error => {
+            console.error('닉네임 중복 확인 오류:', error);
+            alert('닉네임 중복 확인 중 문제가 발생했습니다.');
+        });
+}
 
-            fetch(`${BASE_URL}/api/users/send-verification-code`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                if (data.message === '이메일을 확인하세요.') {
-                    document.getElementById('verification-section').style.display = 'block';
-                    startTimer(3 * 60); // 3분 타이머 시작
-                }
-            })
-            .catch(error => {
-                console.error('이메일 인증 오류:', error);
-                alert('이메일 인증 중 문제가 발생했습니다.');
-            });
+function sendVerificationEmail() {
+    const email = document.getElementById('email').value;
+    if (!email) {
+        alert('이메일을 입력하세요.');
+        return;
+    }
+
+    fetch(`${BASE_URL}/api/users/send-verification-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.message === '이메일을 확인하세요.') {
+            document.getElementById('verification-section').style.display = 'block';
+            startTimer(3 * 60); // 3분 타이머 시작
         }
+    })
+    .catch(error => {
+        console.error('이메일 인증 오류:', error);
+        alert('이메일 인증 중 문제가 발생했습니다.');
+    });
+}
 
-        function startTimer(duration) {
-            let timer = duration;
-            const display = document.getElementById('timer');
-            const interval = setInterval(() => {
-                const minutes = String(Math.floor(timer / 60)).padStart(2, '0');
-                const seconds = String(timer % 60).padStart(2, '0');
+function startTimer(duration) {
+    let timer = duration;
+    const display = document.getElementById('timer');
+    const interval = setInterval(() => {
+        const minutes = String(Math.floor(timer / 60)).padStart(2, '0');
+        const seconds = String(timer % 60).padStart(2, '0');
 
-                display.textContent = `${minutes}:${seconds}`;
+        display.textContent = `${minutes}:${seconds}`;
 
-                if (--timer < 0) {
-                    clearInterval(interval);
-                    alert('인증 시간이 만료되었습니다.');
-                    document.getElementById('verification-section').style.display = 'none';
-                    isEmailVerified = false;
-                }
-            }, 1000);
+        if (--timer < 0) {
+            clearInterval(interval);
+            alert('인증 시간이 만료되었습니다.');
+            document.getElementById('verification-section').style.display = 'none';
+            isEmailVerified = false;
         }
+    }, 1000);
+}
 
-        function verifyCode() {
-            const email = document.getElementById('email').value;
-            const verificationCode = document.getElementById('verification-code').value;
+function verifyCode() {
+    const email = document.getElementById('email').value;
+    const verificationCode = document.getElementById('verification-code').value;
 
-            if (!email || !verificationCode) {
-                alert('이메일과 인증번호를 입력하세요.');
-                return;
-            }
+    if (!email || !verificationCode) {
+        alert('이메일과 인증번호를 입력하세요.');
+        return;
+    }
 
-            fetch(`${BASE_URL}/api/users/verify-code`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, verificationCode })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    isEmailVerified = true;
-                    document.getElementById('verification-message').textContent = '이메일 인증이 완료되었습니다!';
-                    document.getElementById('verification-message').style.color = 'green';
-                } else {
-                    document.getElementById('verification-message').textContent = '인증번호가 일치하지 않습니다.';
-                    document.getElementById('verification-message').style.color = 'red';
-                }
-            })
-            .catch(error => {
-                console.error('인증번호 확인 오류:', error);
-                alert('인증번호 확인 중 문제가 발생했습니다.');
-            });
+    fetch(`${BASE_URL}/api/users/verify-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, verificationCode })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            isEmailVerified = true;
+            document.getElementById('verification-message').textContent = '이메일 인증이 완료되었습니다!';
+            document.getElementById('verification-message').style.color = 'green';
+        } else {
+            document.getElementById('verification-message').textContent = '인증번호가 일치하지 않습니다.';
+            document.getElementById('verification-message').style.color = 'red';
         }
+    })
+    .catch(error => {
+        console.error('인증번호 확인 오류:', error);
+        alert('인증번호 확인 중 문제가 발생했습니다.');
+    });
+}
 
-        document.getElementById('registerForm').addEventListener('submit', function(event) {
+document.getElementById('registerForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 폼의 기본 제출 방지
 
     const password = document.getElementById('password').value;
@@ -232,8 +260,13 @@
         return;
     }
 
-    if (!isUsernameChecked) {
+    if (!isIdChecked) {
         alert('아이디 중복 확인을 완료해야 합니다.');
+        return;
+    }
+
+    if (!isNicknameChecked) {
+        alert('닉네임 중복 확인을 완료해야 합니다.');
         return;
     }
 
@@ -247,8 +280,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            name: document.getElementById('name').value,
+            id: document.getElementById('id').value,
             username: document.getElementById('username').value,
+            nickname: document.getElementById('nickname').value,
             password: document.getElementById('password').value,
             email: document.getElementById('email').value,
             phone: document.getElementById('phone').value,
