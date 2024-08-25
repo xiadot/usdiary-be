@@ -42,5 +42,5 @@ class Comment extends Sequelize.Model {
     db.Comment.belongsTo(db.User, { foreignKey: "user_id", targetKey: "user_id" }); //(N:1)여러 코멘트가 하나의 사용자에 의해 작성될 수 있음
   }
     }
-
+    
 module.exports = Comment;
