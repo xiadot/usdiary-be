@@ -28,7 +28,7 @@ class TodayQuestion extends Sequelize.Model {
     );
   }
   static associate(db){
-    db.TodayQuestion.hasOne(db.TodayAnswer, {
+    db.TodayQuestion.hasMany(db.TodayAnswer, {
       foreignKey: "question_id",
       sourceKey: "question_id",
       onDelete: "CASCADE",
