@@ -77,6 +77,7 @@ class Diary extends Sequelize.Model {
   static associate(db){
     db.Diary.belongsTo(db.User,{foreignKey : "user_id", targetKey: "user_id", onDelete: "CASCADE"});
     db.Diary.belongsTo(db.Board,{foreignKey : "board_id", targetKey: "board_id", onDelete: "CASCADE"})
+    db.Diary.hasMany(db.Todo,{foreignKey : "diary_id", targetKey: "diary_id", onDelete: "CASCADE"})
   }
 }
 

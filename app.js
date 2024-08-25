@@ -9,6 +9,8 @@ const cors = require('cors');
 const diaryRoutes = require('./routes/diary');
 const userRoutes = require('./routes/users'); 
 const registerRoutes = require('./routes/register'); 
+const commentRoutes = require('./routes/comment'); 
+const contentsRoutes = require('./routes/checklists');
 
 const { sequelize } = require('./models'); // db.sequelize 객체
 
@@ -29,17 +31,18 @@ sequelize.sync({ force: false })
 
 // 미들웨어 설정
 app.use(morgan('dev'));
-app.use(cors()); // CORS 미들웨어 추가 - 이메일 인증에 필요
+app.use(cors()); // CORS 미들웨어 추가 -이메일 인증에 필요
 app.use(express.json()); // JSON 요청 파싱 미들웨어 추가
 // 정적 파일 제공 설정
 app.use('/uploads', express.static(path.join(__dirname, 'images')));
 
-
-// 라우팅
+// 도시 contents
+app.use('/', contentsRoutes);
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile)) // docs 대신 swagger로 수정한다.
 app.use('/diaries', diaryRoutes);
 app.use('/users', userRoutes);
 app.use('/register', registerRoutes);
+app.use('/comments', commentRoutes);
 
 // 404 오류 처리
 app.use((req, res, next) => {
