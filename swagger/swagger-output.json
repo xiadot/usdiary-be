@@ -895,6 +895,282 @@
           }
         }
       }
+    },
+    "/todos/{todo_id}": {
+      "get": {
+        "description": "특정 할 일을 가져옵니다.",
+        "tags": ["Todo"],
+        "parameters": [
+          {
+            "name": "todo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 할 일을 가져왔습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "할 일을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "default": {
+            "description": "기타 오류"
+          }
+        }
+      },
+      "patch": {
+        "description": "특정 할 일을 수정합니다.",
+        "tags": ["Todo"],
+        "parameters": [
+          {
+            "name": "todo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공적으로 할 일이 수정되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "할 일을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "특정 할 일을 삭제합니다.",
+        "tags": ["Todo"],
+        "parameters": [
+          {
+            "name": "todo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 할 일이 삭제되었습니다."
+          },
+          "404": {
+            "description": "할 일을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/todos": {
+      "post": {
+        "description": "새로운 할 일을 생성합니다.",
+        "tags": ["Todo"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "할 일이 성공적으로 생성되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/routines/{routine_id}": {
+      "get": {
+        "description": "특정 루틴을 가져옵니다.",
+        "tags": ["Routine"],
+        "parameters": [
+          {
+            "name": "routine_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 루틴을 가져왔습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Routine"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "루틴을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "default": {
+            "description": "기타 오류"
+          }
+        }
+      },
+      "patch": {
+        "description": "특정 루틴을 수정합니다.",
+        "tags": ["Routine"],
+        "parameters": [
+          {
+            "name": "routine_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoutineUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공적으로 루틴이 수정되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Routine"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "루틴을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "특정 루틴을 삭제합니다.",
+        "tags": ["Routine"],
+        "parameters": [
+          {
+            "name": "routine_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 루틴이 삭제되었습니다."
+          },
+          "404": {
+            "description": "루틴을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/routines": {
+      "post": {
+        "description": "새로운 루틴을 생성합니다.",
+        "tags": ["Routine"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoutineCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "루틴이 성공적으로 생성되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Routine"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1176,6 +1452,140 @@
             "type": "string",
             "format": "binary",
             "description": "게시물 사진"
+          }
+        }
+      },
+      "Todo": {
+        "type": "object",
+        "properties": {
+          "todo_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "할 일 ID"
+          },
+          "diary_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "연결된 일기 ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "할 일 내용"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "할 일 완료 여부"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "할 일 생성 시각"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "할 일 수정 시각"
+          }
+        },
+        "required": ["todo_id", "diary_id", "description", "is_completed"]
+      },
+      "TodoCreate": {
+        "type": "object",
+        "properties": {
+          "diary_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "연결된 일기 ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "할 일 내용"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "할 일 완료 여부",
+            "default": false
+          }
+        },
+        "required": ["diary_id", "description"]
+      },
+      "TodoUpdate": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "할 일 내용"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "할 일 완료 여부"
+          }
+        }
+      },
+      "Routine": {
+        "type": "object",
+        "properties": {
+          "routine_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "루틴 ID"
+          },
+          "user_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "사용자 ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "루틴 설명"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "루틴 완료 여부"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "루틴 생성 시각"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "루틴 수정 시각"
+          }
+        },
+        "required": ["routine_id", "user_id", "description", "is_completed"]
+      },
+      "RoutineCreate": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "사용자 ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "루틴 설명"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "루틴 완료 여부",
+            "default": false
+          }
+        },
+        "required": ["user_id", "description"]
+      },
+      "RoutineUpdate": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "루틴 설명"
+          },
+          "is_completed": {
+            "type": "boolean",
+            "description": "루틴 완료 여부"
           }
         }
       }
