@@ -12,6 +12,8 @@ exports.verifyToken = (req, res, next) => {
 
         const decoded = jwt.verify(token.split(' ')[1], process.env.JWT_SECRET); // 'Bearer ' 부분 제거하고 검증
         res.locals.decoded = decoded;
+
+        console.log('Decoded JWT:', decoded); // 디버깅을 위해 콘솔에 출력
         return next(); 
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
