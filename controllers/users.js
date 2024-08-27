@@ -132,7 +132,7 @@ exports.findPwd = async (req, res) => {
 exports.updateTendency = async (req, res) => {
     try {
         const { user_id } = req.params; 
-        const { user_tendency } = req.body; 
+        const { selection  } = req.body;  // 프론트에서 보낸 'selection' ('city' 또는 'forest')
 
         const decoded = res.locals.decoded;
 
@@ -158,8 +158,8 @@ exports.updateTendency = async (req, res) => {
         if (diffDays > 7) {
             return res.status(403).json({ message: '가입 후 7일 이내에만 성향을 변경할 수 있습니다.' });
         }
-
-        user.user_tendency = user_tendency;
+        
+        user.user_tendency = selection; // 성향 db에 저장
         await user.save();
 
         return res.status(200).json({ message: '성향이 성공적으로 수정되었습니다.', user });

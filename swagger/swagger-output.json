@@ -19,7 +19,7 @@
   "/register/register": {
     "post": {
       "summary": "회원가입",
-      "tags": ["register"],
+      "tags": ["Register"],
       "description": "새로운 사용자를 등록합니다.",
       "requestBody": {
         "content": {
@@ -62,7 +62,7 @@
       "post": {
         "summary": "이메일 인증",
         "description": "사용자의 이메일로 인증 코드를 전송합니다.",
-        "tags": ["register"],
+        "tags": ["Register"],
         "requestBody": {
           "required": true,
           "content": {
@@ -136,7 +136,7 @@
       "post": {
         "summary": "이메일 인증 코드 전송",
         "description": "사용자의 이메일로 인증 코드를 전송합니다.",
-        "tags": ["register"],
+        "tags": ["Register"],
         "requestBody": {
           "required": true,
           "content": {
@@ -222,7 +222,7 @@
       "post": {
         "summary": "인증 코드 확인",
         "description": "이메일로 전송된 인증 코드를 확인합니다.",
-        "tags": ["register"],
+        "tags": ["Register"],
         "requestBody": {
           "required": true,
           "content": {
@@ -321,7 +321,7 @@
       "get": {
         "summary": "아이디 중복 확인",
         "description": "아이디의 중복 여부를 확인합니다.",
-        "tags": ["register"],
+        "tags": ["Register"],
         "parameters": [
           {
             "in": "query",
@@ -347,7 +347,7 @@
       "get": {
         "summary": "닉네임 중복 확인",
         "description": "닉네임의 중복 여부를 확인합니다.",
-        "tags": ["register"],
+        "tags": ["Register"],
         "parameters": [
           {
             "in": "query",
@@ -371,7 +371,8 @@
     },  
   "/users/login": {
       "post": {
-        "tags": ["Users"],
+        "summary": "로그인",
+        "tags": ["User"],
         "description": "사용자가 로그인할 수 있습니다.",
         "requestBody": {
           "content": {
@@ -415,7 +416,8 @@
     },
     "/users/findID": {
       "post": {
-        "tags": ["Users"],
+        "summary": "아이디 찾기",
+        "tags": ["User"],
         "description": "사용자가 아이디를 찾을 수 있습니다.",
         "requestBody": {
           "content": {
@@ -461,7 +463,8 @@
     },
     "/users/findPwd": {
       "post": {
-        "tags": ["Users"],
+        "summary": "비밀번호 찾기",
+        "tags": ["User"],
         "description": "사용자가 비밀번호를 찾을 수 있습니다.",
         "requestBody": {
           "content": {
@@ -507,7 +510,8 @@
     },
     "/users/{user_id}/tendency": {
       "patch": {
-        "tags": ["Users"],
+        "summary": "성향 선택 및 업데이트",
+        "tags": ["User"],
         "description": "사용자가 자신의 성향을 선택하고 업데이트합니다. 성향 변경은 가입 후 7일 이내에만 가능합니다.",
         "parameters": [
           {
@@ -526,9 +530,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "user_tendency": {
+                  "selection": {
                     "type": "string",
-                    "example": "도시"
+                    "enum": ["city", "forest"],
+                    "example": "city"
                   }
                 }
               }
@@ -561,7 +566,8 @@
     },
     "/users/login/google/callback": {
       "get": {
-        "tags": ["Users"],
+        "summary": "구글 로그인",
+        "tags": ["User"],
         "description": "Google OAuth 2.0 인증 후 리디렉션된 요청을 처리하여 사용자를 로그인시키거나, 신규 사용자인 경우 데이터베이스에 저장한 후 로그인 처리합니다.",
         "parameters": [
           {
@@ -627,7 +633,8 @@
     },
     "/comments/{diary_id}/comments": {
   "get": {
-    "tags": ["comments"],
+    "summary": "댓글 조회",
+    "tags": ["Comments"],
     "description": "특정 일기에 대한 모든 댓글을 조회합니다.",
     "parameters": [
       {
@@ -704,7 +711,8 @@
 },
 "/comments/{comment_id}": {
   "delete": {
-    "tags": ["comments"],
+    "summary": "댓글 삭제",
+    "tags": ["Comments"],
     "description": "특정 댓글을 삭제합니다.",
     "parameters": [
       {
@@ -760,8 +768,9 @@
 },
     "/diaries/{diary_id}": {
       "get": {
+        "summary": "일기 조회",
         "description": "특정 일기를 가져옵니다.",
-        "tags": ["diary"],
+        "tags": ["Diary"],
         "parameters": [
           {
             "name": "diary_id",
@@ -796,10 +805,11 @@
         }
       },
       "delete": {
+        "summary": "일기 삭제",
         "description": "특정 일기를 삭제합니다.",
-        "tags": ["diary"],
+        "tags": ["Diary"],
         "parameters": [
-         {
+        {
           "name": "diary_id",
           "in": "path",
           "required": true,
@@ -822,8 +832,9 @@
         }
       },
       "patch": {
+        "summary": "일기 수정",
         "description": "특정 일기를 수정합니다.",
-        "tags": ["diary"],
+        "tags": ["Diary"],
         "parameters": [
           {
             "name": "diary_id",
@@ -867,8 +878,9 @@
     },
     "/diaries": {
       "post": {
+        "summary": "일기 생성",
         "description": "새로운 일기를 생성합니다.",
-        "tags": ["diary"],
+        "tags": ["Diary"],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -898,6 +910,7 @@
     },
     "/todos/{todo_id}": {
       "get": {
+        "summary": "할일 조회",
         "description": "특정 할 일을 가져옵니다.",
         "tags": ["Todo"],
         "parameters": [
@@ -934,6 +947,7 @@
         }
       },
       "patch": {
+        "summary": "할일 수정",
         "description": "특정 할 일을 수정합니다.",
         "tags": ["Todo"],
         "parameters": [
@@ -977,6 +991,7 @@
         }
       },
       "delete": {
+        "summary": "할일 삭제",
         "description": "특정 할 일을 삭제합니다.",
         "tags": ["Todo"],
         "parameters": [
@@ -1005,6 +1020,7 @@
     },
     "/todos": {
       "post": {
+        "summary": "할일 생성",
         "description": "새로운 할 일을 생성합니다.",
         "tags": ["Todo"],
         "requestBody": {
@@ -1036,6 +1052,7 @@
     },
     "/routines/{routine_id}": {
       "get": {
+        "summary": "루틴 조회",
         "description": "특정 루틴을 가져옵니다.",
         "tags": ["Routine"],
         "parameters": [
@@ -1072,6 +1089,7 @@
         }
       },
       "patch": {
+        "summary": "루틴 수정",
         "description": "특정 루틴을 수정합니다.",
         "tags": ["Routine"],
         "parameters": [
@@ -1115,6 +1133,7 @@
         }
       },
       "delete": {
+        "summary": "루틴 삭제",
         "description": "특정 루틴을 삭제합니다.",
         "tags": ["Routine"],
         "parameters": [
@@ -1143,6 +1162,7 @@
     },
     "/routines": {
       "post": {
+        "summary": "루틴 생성",
         "description": "새로운 루틴을 생성합니다.",
         "tags": ["Routine"],
         "requestBody": {
@@ -1171,8 +1191,148 @@
           }
         }
       }
+    },
+    "/questions": {
+      "post": {
+        "summary": "오늘의 질문 생성",
+        "tags": ["Today's Q&A"],
+        "description": "새로운 질문을 생성합니다. JWT를 통해 인증된 사용자의 ID가 질문에 연관됩니다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQuestionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "질문이 성공적으로 생성되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류로 질문 생성에 실패했습니다."
+          }
+        }
+      }
+    },
+    "/questions/{question_id}/answers": {
+      "post": {
+        "summary": "오늘의 답변 등록",
+        "tags": ["Today's Q&A"],
+        "description": "사용자가 특정 질문에 대한 답변을 생성합니다. 사용자는 JWT를 통해 인증되며, 질문에 대한 권한이 확인됩니다.",
+        "parameters": [
+          {
+            "name": "question_id",
+            "in": "path",
+            "required": true,
+            "description": "답변을 생성할 질문의 ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAnswerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "답변이 성공적으로 생성되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "이 질문에 답변할 권한이 없습니다."
+          },
+          "404": {
+            "description": "질문을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "서버 오류로 답변 생성에 실패했습니다."
+          }
+        }
+      }
+    },
+    "/questions/{question_id}/answers/{answer_id}": {
+      "patch": {
+        "summary": "오늘의 답변 수정",
+        "tags": ["Today's Q&A"],
+        "description": "사용자가 특정 질문에 대한 기존 답변을 수정합니다. 사용자는 JWT를 통해 인증되며, 해당 답변에 대한 권한이 확인됩니다.",
+        "parameters": [
+          {
+            "name": "question_id",
+            "in": "path",
+            "required": true,
+            "description": "수정할 답변이 속한 질문의 ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "answer_id",
+            "in": "path",
+            "required": true,
+            "description": "수정할 답변의 ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAnswerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "답변이 성공적으로 수정되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "이 답변을 수정할 권한이 없습니다."
+          },
+          "404": {
+            "description": "답변을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "서버 오류로 답변 수정에 실패했습니다."
+          }
+        }
+      }
     }
   },
+
   "components": {
     "schemas": {
       "Login": {
@@ -1586,6 +1746,109 @@
           "is_completed": {
             "type": "boolean",
             "description": "루틴 완료 여부"
+          }
+        }
+      },
+      "CreateQuestionRequest": {
+        "type": "object",
+        "properties": {
+          "question_text": {
+            "type": "string",
+            "description": "생성할 질문의 텍스트",
+            "example": "오늘의 질문은 무엇인가요?"
+          }
+        }
+      },
+      "CreateAnswerRequest": {
+        "type": "object",
+        "properties": {
+          "answer_text": {
+            "type": "string",
+            "description": "생성할 답변의 텍스트",
+            "example": "오늘의 질문에 대한 답변입니다."
+          }
+        }
+      },
+      "UpdateAnswerRequest": {
+        "type": "object",
+        "properties": {
+          "answer_text": {
+            "type": "string",
+            "description": "수정할 답변의 텍스트",
+            "example": "수정된 답변 내용입니다."
+          }
+        }
+      },
+      "QuestionResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "응답 메시지",
+            "example": "질문이 생성되었습니다."
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "question_id": {
+                "type": "integer",
+                "description": "생성된 질문의 ID"
+              },
+              "question_text": {
+                "type": "string",
+                "description": "생성된 질문의 텍스트"
+              },
+              "user_id": {
+                "type": "integer",
+                "description": "질문을 생성한 사용자의 ID"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "질문이 생성된 시간"
+              }
+            }
+          }
+        }
+      },
+      "AnswerResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "응답 메시지",
+            "example": "답변이 등록되었습니다."
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "answer_id": {
+                "type": "integer",
+                "description": "생성되거나 수정된 답변의 ID"
+              },
+              "question_id": {
+                "type": "integer",
+                "description": "답변이 속한 질문의 ID"
+              },
+              "answer_text": {
+                "type": "string",
+                "description": "답변의 텍스트"
+              },
+              "user_id": {
+                "type": "integer",
+                "description": "답변을 작성한 사용자의 ID"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "답변이 생성된 시간"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "답변이 수정된 시간 (수정된 경우)"
+              }
+            }
           }
         }
       }
