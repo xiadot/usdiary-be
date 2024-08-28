@@ -287,3 +287,37 @@ exports.updateAnswer = async (req, res) => {
         res.status(500).json({ message: 'Failed to update answer' });
     }
 };
+
+// TodayAnswer 삭제
+exports.deleteAnswer = async (req, res) => {
+    try {
+        const { question_id, answer_id } = req.params;
+        const userId = res.locals.decoded.userId; 
+
+        const answer = await TodayAnswer.findOne({
+            where: {
+                answer_id,
+                question_id,
+                user_id: userId
+            },
+        });
+
+        if (!answer) {
+            return res.status(404).json({ message: '답변을 찾을 수 없습니다.' });
+        }
+
+        if (answer.user_id !== userId) {
+            return res.status(403).json({ message: '이 답변을 삭제할 권한이 없습니다.' });
+        }
+
+        await answer.destroy();
+
+        res.status(200).json({
+            message: '답변이 삭제되었습니다.'
+        });
+
+    } catch (error) {
+        console.error('답변 삭제 중 오류 발생:', error);
+        res.status(500).json({ message: '답변 삭제에 실패했습니다.' });
+    }
+};
