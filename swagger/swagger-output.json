@@ -58,80 +58,6 @@
       }
     }
   },
-  "/register/verify-email": {
-      "post": {
-        "summary": "이메일 인증",
-        "description": "사용자의 이메일로 인증 코드를 전송합니다.",
-        "tags": ["Register"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "user@example.com"
-                  }
-                },
-                "required": ["email"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "이메일이 성공적으로 전송되었습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "이메일이 성공적으로 전송되었습니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "유효하지 않은 이메일 주소입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "유효하지 않은 이메일 주소입니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "서버 오류로 인해 이메일 전송에 실패했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "이메일 전송에 실패했습니다."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/register/send-verification-code": {
       "post": {
         "summary": "이메일 인증 코드 전송",
@@ -1329,9 +1255,61 @@
             "description": "서버 오류로 답변 수정에 실패했습니다."
           }
         }
+      },
+  "delete": {
+    "summary": "오늘의 답변 삭제",
+    "tags": ["Today's Q&A"],
+    "description": "사용자가 특정 질문에 대한 자신의 기존 답변을 삭제합니다. 사용자는 JWT를 통해 인증되며, 해당 답변에 대한 권한이 확인됩니다.",
+    "parameters": [
+      {
+        "name": "question_id",
+        "in": "path",
+        "required": true,
+        "description": "삭제할 답변이 속한 질문의 ID",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      {
+        "name": "answer_id",
+        "in": "path",
+        "required": true,
+        "description": "삭제할 답변의 ID",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "답변이 성공적으로 삭제되었습니다.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "답변이 삭제되었습니다."
+                }
+              }
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "이 답변을 삭제할 권한이 없습니다."
+      },
+      "404": {
+        "description": "답변을 찾을 수 없습니다."
+      },
+      "500": {
+        "description": "서버 오류로 답변 삭제에 실패했습니다."
+        }
       }
     }
-  },
+  }
+},
 
   "components": {
     "schemas": {
