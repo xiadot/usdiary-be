@@ -10,14 +10,14 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../multer/multer'); // multer 설정 가져오기
-const { sortDiary, sortDiaryViews, sortDiaryLikes, renderDiary,createDiary,updateDiary, deleteDiary } = require('../controllers/diary');
+const { sortDiary, sortWeeklyViews, sortWeeklyLikes, renderDiary,createDiary,updateDiary, deleteDiary } = require('../controllers/diary');
 
 // 일기 목록 페이지 렌더링 (최신순)
 router.get('/', sortDiary);
 // (조회수 높은순)
-router.get('/views', sortDiaryViews);
+router.get('/views', sortWeeklyViews);
 // (좋아요 높은순)
-router.get('/likes', sortDiaryLikes);
+router.get('/likes', sortWeeklyLikes);
 
 
 // 일기 작성 페이지 렌더링
@@ -32,5 +32,3 @@ router.patch('/:diary_id', upload.single('post_photo'), updateDiary);
 router.delete('/:diary_id', deleteDiary);
 
 module.exports = router;
-
-
