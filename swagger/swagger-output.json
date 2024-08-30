@@ -16,7 +16,7 @@
     }
   ],
   "paths": {
-  "/register/register": {
+  "/register": {
     "post": {
       "summary": "회원가입",
       "tags": ["Register"],
