@@ -108,7 +108,7 @@ exports.deleteDiary = async (req, res) => {
 // 일기 목록 정렬 (최신순)
 exports.sortDiary = async (req, res) => {
   try {
-      const { page = 1, limit = 5 } = req.query;  // 페이지와 항목 수 쿼리로 받아옴
+      const { page = 1, limit = 15 } = req.query;  // 페이지와 항목 수 쿼리로 받아옴
       const offset = (page - 1) * limit;
 
       const diary = await Diary.findAll({
