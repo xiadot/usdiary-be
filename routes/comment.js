@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { renderComments, deleteComment } = require('../controllers/comment');
+const { updateComment,createComment,renderComments, deleteComment } = require('../controllers/comment');
 
 //댓글 조회 - 특정 일기에 대한 댓글 조회
 router.get('/:diary_id/comments', renderComments);
