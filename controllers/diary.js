@@ -199,6 +199,7 @@ exports.sortWeeklyLikes = async (req, res) => {
 
       console.log(diary);
       res.json(diary);
+      
   } catch (error) {
     console.error('Error sorting weekly likes:', error);
     res.status(500).json({ message: 'Internal Server Error' });

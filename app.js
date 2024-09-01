@@ -13,12 +13,14 @@ const commentRoutes = require('./routes/comment');
 const contentRoutes = require('./routes/contents');
 
 const { sequelize } = require('./models'); // db.sequelize 객체
+app.use(cors({
+  origin: 'http://localhost:3000', // 허용할 출처
+  methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE','OPTIONS'], // 허용할 HTTP 메서드
+  credentials: true // 필요한 경우 인증 정보 허용
+}));
 
 app.set('port', process.env.PORT || 3001);
 
-// 뷰 엔진 설정
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 // 데이터베이스 연결
 sequelize.sync({ force: false })
@@ -31,7 +33,7 @@ sequelize.sync({ force: false })
 
 // 미들웨어 설정
 app.use(morgan('dev'));
-app.use(cors()); // CORS 미들웨어 추가 - 이메일 인증에 필요
+
 app.use(express.json()); // JSON 요청 파싱 미들웨어 추가
 // 정적 파일 제공 설정
 app.use('/uploads', express.static(path.join(__dirname, 'images')));
