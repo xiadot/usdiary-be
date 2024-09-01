@@ -15,9 +15,9 @@ const { sortDiary, sortWeeklyViews, sortWeeklyLikes, renderDiary,createDiary,upd
 // 일기 목록 페이지 렌더링 (최신순)
 router.get('/', sortDiary);
 // (조회수 높은순)
-router.get('/views', sortWeeklyViews);
+router.get('/weekly-views', sortWeeklyViews);
 // (좋아요 높은순)
-router.get('/likes', sortWeeklyLikes);
+router.get('/weekly-likes', sortWeeklyLikes);
 
 
 // 일기 작성 페이지 렌더링
