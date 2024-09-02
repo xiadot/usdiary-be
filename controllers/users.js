@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
             { expiresIn: '24h' } // 토큰 24시간 만료
         );
 
-        res.json({ message: '로그인 성공', token });
+        res.json({ message: '로그인 성공', token,user });
     } catch (error) {
         console.error('로그인 처리 중 오류 발생:', error);
         res.status(500).json({ message: '내부 서버 오류입니다.' });

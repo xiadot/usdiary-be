@@ -9,9 +9,9 @@ router.get('/:diary_id/comments', renderComments);
 router.post('/:diary_id/comments', createComment);
 
 // 댓글 수정 - 특정 댓글 수정
-router.put('/:diaryId/comments/:commentId', updateComment);
+router.put('/:diary_id/comments/:comment_id', updateComment);
 
 //댓글 삭제 - 특정 댓글 삭제
-router.delete('/comments/:comment_id', deleteComment);
+router.delete('/:diary_id/comments/:comment_id', deleteComment);
 
 module.exports = router;

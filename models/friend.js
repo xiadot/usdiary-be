@@ -10,19 +10,20 @@ class Friend extends Sequelize.Model {
           primaryKey: true,
           autoIncrement: true
         },
-        user_id2: {
-          type: Sequelize.BIGINT,  //구독한 사람 타입이 정의되어 있지 않아서 유저 아이디와 동일하게 타입 설정
+        follower_id: {
+          type: Sequelize.BIGINT,   // 팔로우하는 유저의 아이디
           allowNull: false,
-          primaryKey: true,
+         
+        },
+        following_id: {
+          type: Sequelize.BIGINT,  // 팔로잉되는 유저의 아이디
+          allowNull: false,
         },
         relationship: {
-          type: Sequelize.BOOLEAN, //Domain은 BOOLEAN이고 type는 BOOL이라서 BOOL로 작성
+          type: Sequelize.BOOLEAN, 
           allowNull: true,
         },
-        user_id: {
-          type: Sequelize.BIGINT,
-          allowNull: true,
-        }
+
       },
       {
         sequelize,
@@ -37,7 +38,11 @@ class Friend extends Sequelize.Model {
     );
   }
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: "user_id", targetKey: "user_id" }); //(N:1)여러 명의 친구가 한명의 사용자에게 팔로잉될 수 있음
+    // 팔로워 관계 (N:1) 여러 명의 사용자가 팔로잉될 수 있음
+    this.belongsTo(models.User, { foreignKey: "follower_id", targetKey: "user_id", as: 'Follower' });
+
+    // 팔로잉 관계 (N:1) 한 사용자가 여러 명의 친구를 팔로우할 수 있음
+    this.belongsTo(models.User, { foreignKey: "following_id", targetKey: "user_id", as: 'Following' });
   }
     }
 
