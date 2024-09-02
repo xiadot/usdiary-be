@@ -77,7 +77,6 @@ class User extends Sequelize.Model {
         onDelete: "CASCADE",
       });
       db.User.hasMany(db.Comment, { foreignKey: "user_id", sourceKey: "user_id" });
-      db.User.hasMany(db.Friend, { foreignKey: "user_id", sourceKey: "user_id" });
       db.User.hasMany(db.Like, { foreignKey: "diary_user", sourceKey: "user_id" });
       db.User.hasMany(db.Notification, { foreignKey: "user_id", sourceKey: "user_id" });
       db.User.hasMany(db.QnA, { foreignKey: "user_id", sourceKey: "user_id" });
@@ -85,7 +84,10 @@ class User extends Sequelize.Model {
       db.User.hasMany(db.TodayAnswer, {foreignKey: "user_id",sourceKey: "user_id", onDelete: "CASCADE"});
       db.User.hasMany(db.Point, {foreignKey: "user_id",sourceKey: "user_id", onDelete: "CASCADE"});
       db.User.hasMany(db.Routine, {foreignKey: "user_id",sourceKey: "user_id", onDelete: "CASCADE"});
-    
+      // 이 유저가 팔로우하는 다른 유저들 (팔로잉 관계)
+      db.User.belongsToMany(db.User, {through: db.Friend, foreignKey: 'follower_id', as: 'Following',otherKey: 'following_id'});
+      // 이 유저를 팔로우하는 유저들 (팔로워 관계)
+      db.User.belongsToMany(db.User, { through: db.Friend, foreignKey: 'following_id',as: 'Followers',otherKey: 'follower_id', });
     }
 
     
