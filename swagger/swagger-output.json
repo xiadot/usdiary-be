@@ -655,141 +655,7 @@
         }
       }
     },
-    "/comments/{diary_id}/comments": {
-  "get": {
-    "summary": "댓글 조회",
-    "tags": ["Comments"],
-    "description": "특정 일기에 대한 모든 댓글을 조회합니다.",
-    "parameters": [
-      {
-        "in": "path",
-        "name": "diary_id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        },
-        "description": "댓글을 조회할 일기의 ID"
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "댓글 조회 성공",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "commentId": {
-                    "type": "string",
-                    "description": "댓글 ID"
-                  },
-                  "author": {
-                    "type": "string",
-                    "description": "댓글 작성자의 이름"
-                  },
-                  "content": {
-                    "type": "string",
-                    "description": "댓글 내용"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "댓글 작성일"
-                  }
-                },
-                "example": {
-                  "commentId": "607c191e810c19729de860ea",
-                  "author": "John Doe",
-                  "content": "This is a comment.",
-                  "createdAt": "2024-08-21T12:34:56Z"
-                }
-              }
-            }
-          }
-        }
-      },
-      "404": {
-        "description": "일기를 찾을 수 없음 또는 댓글이 없음",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "에러 메시지",
-                  "example": "일기를 찾을 수 없거나 댓글이 없습니다."
-                }
-              }
-            }
-          }
-        }
-      },
-      "500": {
-        "description": "Internal Server Error"
-      }
-    }
-  }
-},
-"/comments/{comment_id}": {
-  "delete": {
-    "summary": "댓글 삭제",
-    "tags": ["Comments"],
-    "description": "특정 댓글을 삭제합니다.",
-    "parameters": [
-      {
-        "in": "path",
-        "name": "comment_id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        },
-        "description": "삭제할 댓글의 ID"
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "댓글 삭제 성공",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "삭제 성공 메시지",
-                  "example": "댓글이 성공적으로 삭제되었습니다."
-                }
-              }
-            }
-          }
-        }
-      },
-      "404": {
-        "description": "댓글을 찾을 수 없음",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "에러 메시지",
-                  "example": "댓글을 찾을 수 없습니다."
-                }
-              }
-            }
-          }
-        }
-      },
-      "500": {
-        "description": "Internal Server Error"
-      }
-    }
-  }
-},
+    
     "/diaries/{diary_id}": {
       "get": {
         "summary": "일기 조회",
@@ -1062,6 +928,268 @@
         }
       }
     },
+    "/diaries/{diary_id}/comments": {
+    "post": {
+      "summary": "댓글 생성",
+      "description": "일기에 댓글을 작성합니다.",
+      "tags": ["Comments"],
+      "parameters": [
+        {
+          "name": "diary_id",
+          "in": "path",
+          "description": "댓글을 달 일기의 ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "댓글 내용",
+                  "example": "This is a comment."
+                }
+              },
+              "required": ["content"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "성공적으로 댓글이 생성되었습니다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "일기를 찾을 수 없습니다."
+        },
+        "500": {
+          "description": "서버 오류"
+        }
+      }
+    },
+    "get": {
+      "summary": "댓글 조회",
+      "tags": ["Comments"],
+      "description": "특정 일기에 대한 모든 댓글을 조회합니다.",
+      "parameters": [
+        {
+          "name": "diary_id",
+          "in": "path",
+          "description": "댓글을 조회할 일기의 ID",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "댓글 조회 성공",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "commentId": {
+                      "type": "string",
+                      "description": "댓글 ID"
+                    },
+                    "author": {
+                      "type": "string",
+                      "description": "댓글 작성자의 이름"
+                    },
+                    "content": {
+                      "type": "string",
+                      "description": "댓글 내용"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "댓글 작성일"
+                    }
+                  },
+                  "example": {
+                    "commentId": "607c191e810c19729de860ea",
+                    "author": "John Doe",
+                    "content": "This is a comment.",
+                    "createdAt": "2024-08-21T12:34:56Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "일기를 찾을 수 없거나 댓글이 없음",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "에러 메시지",
+                    "example": "일기를 찾을 수 없거나 댓글이 없습니다."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal Server Error"
+        }
+      }
+    }
+  },
+  "/diaries/{diary_id}/comments/{comment_id}": {
+    "put": {
+      "summary": "댓글 수정",
+      "description": "일기에 달린 댓글을 수정합니다.",
+      "tags": ["Comments"],
+      "parameters": [
+        {
+          "name": "diary_id",
+          "in": "path",
+          "description": "수정할 댓글이 있는 일기의 ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "comment_id",
+          "in": "path",
+          "description": "수정할 댓글의 ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "수정된 댓글 내용",
+                  "example": "Updated comment."
+                }
+              },
+              "required": ["content"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "성공적으로 댓글이 수정되었습니다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "댓글을 찾을 수 없거나 수정 권한이 없습니다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "에러 메시지",
+                    "example": "댓글을 찾을 수 없거나 수정 권한이 없습니다."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "서버 오류"
+        }
+      }
+    }
+  },
+  "/diaries/comments/{comment_id}": {
+    "delete": {
+      "summary": "댓글 삭제",
+      "tags": ["Comments"],
+      "description": "특정 댓글을 삭제합니다.",
+      "parameters": [
+        {
+          "name": "comment_id",
+          "in": "path",
+          "description": "삭제할 댓글의 ID",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "댓글 삭제 성공",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "삭제 성공 메시지",
+                    "example": "댓글이 성공적으로 삭제되었습니다."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "댓글을 찾을 수 없음",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "에러 메시지",
+                    "example": "댓글을 찾을 수 없습니다."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "서버 오류"
+        }
+      }
+    }
+  },
 
     "/todos/{todo_id}": {
       "get": {
@@ -1492,6 +1620,162 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/users/{user_id}/followers": {
+      "get": {
+        "summary": "팔로워 목록 조회",
+        "description": "특정 유저의 팔로워 목록을 조회합니다.",
+        "tags": ["Mooner"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "팔로워를 조회할 유저의 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 팔로워 목록을 가져왔습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Follower list retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "유저를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "default": {
+            "description": "기타 오류"
+          }
+        }
+      }
+    },
+    "/users/{user_id}/followings": {
+      "get": {
+        "summary": "팔로잉 목록 조회",
+        "description": "특정 유저가 팔로우하는 목록을 조회합니다.",
+        "tags": ["Mooner"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "팔로잉 목록을 조회할 유저의 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 팔로잉 목록을 가져왔습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Following list retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "유저를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "default": {
+            "description": "기타 오류"
+          }
+        }
+      }
+    },
+    "/users/{user_id}/friends": {
+      "get": {
+        "summary": "친구 목록 조회",
+        "description": "특정 유저의 친구 목록을 조회합니다.",
+        "tags": ["Mooner"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "친구 목록을 조회할 유저의 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 친구 목록을 가져왔습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Friend list retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "유저를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "default": {
+            "description": "기타 오류"
+          }
+        }
       }
     }
   },
