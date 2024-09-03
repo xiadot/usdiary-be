@@ -58,80 +58,6 @@
       }
     }
   },
-  "/register/verify-email": {
-      "post": {
-        "summary": "이메일 인증",
-        "description": "사용자의 이메일로 인증 코드를 전송합니다.",
-        "tags": ["Register"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "user@example.com"
-                  }
-                },
-                "required": ["email"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "이메일이 성공적으로 전송되었습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "이메일이 성공적으로 전송되었습니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "유효하지 않은 이메일 주소입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "유효하지 않은 이메일 주소입니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "서버 오류로 인해 이메일 전송에 실패했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "이메일 전송에 실패했습니다."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/register/send-verification-code": {
       "post": {
         "summary": "이메일 인증 코드 전송",
@@ -1748,14 +1674,48 @@
           "500": {
             "description": "서버 오류로 답변 수정에 실패했습니다."
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
+        }
+      },
+      "delete": {
+        "summary": "오늘의 답변 삭제",
+        "tags": ["Today's Q&A"],
+        "description": "사용자가 특정 질문에 대한 답변을 삭제합니다. 사용자는 JWT를 통해 인증되며, 해당 답변에 대한 권한이 확인됩니다.",
+        "parameters": [
+            {
+                "name": "question_id",
+                "in": "path",
+                "required": true,
+                "description": "삭제할 답변이 속한 질문의 ID",
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            {
+                "name": "answer_id",
+                "in": "path",
+                "required": true,
+                "description": "삭제할 답변의 ID",
+                "schema": {
+                    "type": "integer"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "답변이 성공적으로 삭제되었습니다."
+            },
+            "403": {
+                "description": "이 답변을 삭제할 권한이 없습니다."
+            },
+            "404": {
+                "description": "답변을 찾을 수 없습니다."
+            },
+            "500": {
+                "description": "서버 오류로 답변 삭제에 실패했습니다."
+            }
+        }
+    }
+  },
     "/users/{user_id}/followers": {
       "get": {
         "summary": "팔로워 목록 조회",
@@ -1805,6 +1765,50 @@
           "default": {
             "description": "기타 오류"
           }
+        }
+      },
+      "delete": {
+        "summary": "팔로워 삭제",
+        "description": "유저의 특정 팔로워를 삭제합니다.",
+        "tags": ["Mooner"],
+        "parameters": [
+            {
+                "name": "follower_id",
+                "in": "path",
+                "description": "삭제할 팔로워의 ID",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "성공적으로 팔로워를 삭제했습니다.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Follower removed successfully"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "유저 또는 팔로워를 찾을 수 없습니다."
+            },
+            "500": {
+                "description": "Internal Server Error"
+            },
+            "default": {
+                "description": "기타 오류"
+            }
         }
       }
     },
@@ -1858,7 +1862,51 @@
             "description": "기타 오류"
           }
         }
-      }
+      },
+      "delete": {
+        "summary": "팔로잉 삭제",
+        "description": "유저가 팔로우하는 특정 계정을 삭제합니다.",
+        "tags": ["Mooner"],
+        "parameters": [
+            {
+                "name": "following_id",
+                "in": "path",
+                "description": "언팔로우할 유저의 ID",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "성공적으로 팔로잉을 취소했습니다.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Unfollowed successfully"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "팔로잉 대상을 찾을 수 없습니다."
+            },
+            "500": {
+                "description": "Internal Server Error"
+            },
+            "default": {
+                "description": "기타 오류"
+            }
+        }
+      } 
     },
     "/users/{user_id}/friends": {
       "get": {
@@ -1911,8 +1959,70 @@
           }
         }
       }
+    },
+"/users/{user_id}/followings/{following_id}/diaries": {
+  "get": {
+    "summary": "팔로잉하는 친구의 게시글(일기) 조회",
+    "description": "유저의 팔로잉 목록에서 선택한 친구의 게시글(일기)을 조회합니다.",
+    "tags": ["Mooner"],
+    "parameters": [
+      {
+        "name": "user_id",
+        "in": "path",
+        "description": "게시글(일기)을 조회할 유저의 ID",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      {
+        "name": "following_id",
+        "in": "path",
+        "description": "유저가 조회할 친구의 ID (팔로우하는 친구의 ID)",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "성공적으로 친구의 게시글(일기)을 조회했습니다.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Friend diaries retrieved successfully"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Diary" 
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "유저 또는 친구를 찾을 수 없거나 친구의 게시글이 없습니다."
+      },
+      "500": {
+        "description": "Internal Server Error"
+      },
+      "default": {
+        "description": "기타 오류"
+        }
+      }
     }
-  },
+  }
+},
 
   "components": {
     "schemas": {
