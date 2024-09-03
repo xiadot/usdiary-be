@@ -148,7 +148,69 @@ exports.deleteFollowing = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while deleting the following' });
     }
 };
-// 5. 친구 게시글 조회
+// 5. 팔로잉 추가 (친구추가)
+exports.addFollowing = async (req, res) => {
+    try {
+        const signId = req.params.sign_id; // 현재 사용자 sign_id
+        const followingId = req.body.following_id; // 팔로우할 대상 sign_id
+
+        // 이미 팔로우 중인지 확인
+        const existingFollow = await Friend.findOne({
+            where: {
+                follower_sign_id: signId,
+                following_sign_id: followingId
+            }
+        });
+
+        if (existingFollow) {
+            return res.status(400).json({ message: '이미 팔로우 중인 유저입니다.' });
+        }
+
+        // 팔로우 관계 추가
+        await Friend.create({
+            follower_sign_id: signId,
+            following_sign_id: followingId
+        });
+
+        res.status(201).json({ message: '성공적으로 팔로우 되었습니다.' });
+    } catch (error) {
+        console.error('Error adding following:', error);
+        res.status(500).json({ error: 'An error occurred while adding the following' });
+    }
+};
+// 6. 친구 목록에서 검색
+exports.searchFriend = async (req, res) => {
+    try {
+        const signId = req.params.sign_id; // 현재 사용자 sign_id
+        const searchSignId = req.query.sign_id; // 검색할 사용자 sign_id
+
+        // 현재 사용자가 팔로우하고 있는 사용자 목록에서 특정 사용자 검색
+        const following = await Friend.findOne({
+            where: {
+                follower_sign_id: signId,
+                following_sign_id: searchSignId
+            },
+            include: [{
+                model: User,
+                as: 'Following', // 팔로우된 사용자 정보
+                attributes: ['sign_id', 'user_name', 'user_tendency']
+            }]
+        });
+
+        if (!following) {
+            return res.status(404).json({ message: '해당 사용자는 팔로우 목록에 없습니다.' });
+        }
+
+        res.status(200).json({
+            message: '팔로우 목록에서 사용자를 찾았습니다.',
+            data: following.Following
+        });
+    } catch (error) {
+        console.error('Error searching friend:', error);
+        res.status(500).json({ error: 'An error occurred while searching for the friend' });
+    }
+};
+// 7. 친구 게시글 조회
 exports.getFriendDiaries = async (req, res) => {
     try {
         const userId = req.params.user_id; // 현재 사용자 ID
