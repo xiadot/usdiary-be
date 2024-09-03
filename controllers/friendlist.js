@@ -98,3 +98,54 @@ exports.getFollowing = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while retrieving the following list' });
     }
 };
+
+// 3. 팔로워 삭제
+exports.deleteFollowers = async (req, res) => {
+    try {
+        const userId = req.params.user_id; // 현재 유저의 ID
+        const followerId = req.body.follower_id; // 삭제할 팔로워의 ID
+
+        // 특정 팔로워 삭제
+        const result = await Friend.destroy({
+            where: {
+                follower_id: followerId,
+                following_id: userId
+            }
+        });
+
+        if (result === 0) {
+            return res.status(404).json({ message: 'Follower not found' });
+        }
+
+        res.status(200).json({ message: 'Follower deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting follower:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the follower' });
+    }
+};
+
+
+// 4. 팔로잉 삭제
+exports.deleteFollowing = async (req, res) => {
+    try {
+        const userId = req.params.user_id; // 현재 유저의 ID
+        const followingId = req.body.following_id; // 삭제할 팔로잉의 ID
+
+        // 특정 팔로잉 삭제
+        const result = await Friend.destroy({
+            where: {
+                follower_id: userId,
+                following_id: followingId
+            }
+        });
+
+        if (result === 0) {
+            return res.status(404).json({ message: 'Following not found' });
+        }
+
+        res.status(200).json({ message: 'Following deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting following:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the following' });
+    }
+};
