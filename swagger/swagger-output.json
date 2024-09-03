@@ -434,17 +434,17 @@
         }
       }
     },
-    "/users/{user_id}/tendency": {
+    "/users/{sign_id}/tendency": {
       "patch": {
         "summary": "성향 선택 및 업데이트",
         "tags": ["User"],
         "description": "사용자가 자신의 성향을 선택하고 업데이트합니다. 성향 변경은 가입 후 7일 이내에만 가능합니다.",
         "parameters": [
           {
-            "name": "user_id",
+            "name": "sign_id",
             "in": "path",
             "required": true,
-            "description": "수정할 사용자의 ID",
+            "description": "수정할 사용자의 sign_id",
             "schema": {
               "type": "integer"
             }
@@ -656,7 +656,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/comments/{comment_id}": {
@@ -713,7 +716,11 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
+        
       }
     },
     "/diaries/{diary_id}": {
@@ -752,7 +759,10 @@
           "default": {
             "description": "기타 오류"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "delete": {
         "summary": "일기 삭제",
@@ -779,7 +789,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "patch": {
         "summary": "일기 수정",
@@ -823,7 +836,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/diaries": {
@@ -855,7 +871,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "get": {
         "summary": "최신 일기 목록 조회",
@@ -897,7 +916,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/diaries/weekly-views": {
@@ -1038,7 +1060,10 @@
         "500": {
           "description": "서버 오류"
         }
-      }
+      },
+      "security": [
+        { "bearerAuth": [] }
+      ]
     },
     "get": {
       "summary": "댓글 조회",
@@ -1114,7 +1139,10 @@
         "500": {
           "description": "Internal Server Error"
         }
-      }
+      },
+      "security": [
+        { "bearerAuth": [] }
+      ]
     }
   },
   "/diaries/{diary_id}/comments/{comment_id}": {
@@ -1190,7 +1218,10 @@
         "500": {
           "description": "서버 오류"
         }
-      }
+      },
+      "security": [
+        { "bearerAuth": [] }
+      ]
     }
   },
   "/diaries/comments/{comment_id}": {
@@ -1247,7 +1278,10 @@
         "500": {
           "description": "서버 오류"
         }
-      }
+      },
+      "security": [
+        { "bearerAuth": [] }
+      ]
     }
   },
 
@@ -1287,10 +1321,11 @@
           "default": {
             "description": "기타 오류"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
-      
-          
       "patch": {
         "summary": "할일 수정",
         "description": "특정 할 일을 수정합니다.",
@@ -1333,7 +1368,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "delete": {
         "summary": "할일 삭제",
@@ -1360,7 +1398,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/todos": {
@@ -1392,7 +1433,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/routines/{routine_id}": {
@@ -1431,7 +1475,10 @@
           "default": {
             "description": "기타 오류"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "patch": {
         "summary": "루틴 수정",
@@ -1475,7 +1522,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "delete": {
         "summary": "루틴 삭제",
@@ -1502,7 +1552,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/routines": {
@@ -1534,7 +1587,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/contents/questions": {
@@ -1674,7 +1730,10 @@
           "500": {
             "description": "서버 오류로 답변 수정에 실패했습니다."
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "delete": {
         "summary": "오늘의 답변 삭제",
@@ -1713,19 +1772,22 @@
             "500": {
                 "description": "서버 오류로 답변 삭제에 실패했습니다."
             }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
     }
   },
-    "/friends/{user_id}/followers": {
+    "/friends/{sign_id}/followers": {
       "get": {
         "summary": "팔로워 목록 조회",
         "description": "특정 유저의 팔로워 목록을 조회합니다.",
         "tags": ["Mooner"],
         "parameters": [
           {
-            "name": "user_id",
+            "name": "sign_id",
             "in": "path",
-            "description": "팔로워를 조회할 유저의 ID",
+            "description": "팔로워를 조회할 유저의 sign_id",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1748,7 +1810,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/User"
+                        "$ref": "#/components/schemas/FollowingUser"
                       }
                     }
                   }
@@ -1765,7 +1827,10 @@
           "default": {
             "description": "기타 오류"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "delete": {
         "summary": "팔로워 삭제",
@@ -1773,15 +1838,23 @@
         "tags": ["Mooner"],
         "parameters": [
             {
-                "name": "follower_id",
-                "in": "path",
-                "description": "삭제할 팔로워의 ID",
-                "required": true,
-                "schema": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
+          "name": "sign_id",
+          "in": "path",
+          "description": "팔로워를 삭제할 사용자의 sign_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "follower_sign_id",
+          "in": "query",
+          "description": "삭제할 팔로워의 sign_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
         ],
         "responses": {
             "200": {
@@ -1809,17 +1882,20 @@
             "default": {
                 "description": "기타 오류"
             }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
-    "/friends/{user_id}/followings": {
+    "/friends/{sign_id}/followings": {
       "get": {
         "summary": "팔로잉 목록 조회",
         "description": "특정 유저가 팔로우하는 목록을 조회합니다.",
         "tags": ["Mooner"],
         "parameters": [
           {
-            "name": "user_id",
+            "name": "sign_id",
             "in": "path",
             "description": "팔로잉 목록을 조회할 유저의 ID",
             "required": true,
@@ -1844,7 +1920,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/User"
+                        "$ref": "#/components/schemas/FollowingUser"
                       }
                     }
                   }
@@ -1861,23 +1937,34 @@
           "default": {
             "description": "기타 오류"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "delete": {
         "summary": "팔로잉 삭제",
         "description": "유저가 팔로우하는 특정 계정을 삭제합니다.",
         "tags": ["Mooner"],
         "parameters": [
-            {
-                "name": "following_id",
-                "in": "path",
-                "description": "언팔로우할 유저의 ID",
-                "required": true,
-                "schema": {
-                    "type": "integer",
-                    "format": "int64"
-                }
+          {
+            "name": "sign_id",
+            "in": "path",
+            "required": true,
+            "description": "언팔로우를 요청하는 사용자의 sign_id",
+            "schema": {
+              "type": "string"
             }
+          },
+          {
+            "name": "following_sign_id",
+            "in": "query",
+            "required": true,
+            "description": "언팔로우할 대상 사용자의 sign_id",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
             "200": {
@@ -1905,10 +1992,11 @@
             "default": {
                 "description": "기타 오류"
             }
-        }
-      } 
-    },
-    "/friends/{sign_id}/followings": {
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
+      },
       "post": {
         "summary": "팔로잉 추가 (친구 추가)",
         "tags": ["Mooner"],
@@ -1918,7 +2006,7 @@
             "name": "sign_id",
             "in": "path",
             "required": true,
-            "description": "팔로우를 요청하는 사용자의 ID",
+            "description": "팔로우를 요청하는 사용자의 sign_id",
             "schema": {
               "type": "string"
             }
@@ -1951,7 +2039,10 @@
           "500": {
             "description": "팔로우 추가 중 오류가 발생했습니다."
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/friends/{sign_id}/search": {
@@ -2005,19 +2096,22 @@
           "500": {
             "description": "친구 검색 중 오류가 발생했습니다."
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
-    "/friends/{user_id}/friends": {
+    "/friends/{sign_id}/friends": {
       "get": {
         "summary": "친구 목록 조회",
         "description": "특정 유저의 친구 목록을 조회합니다.",
         "tags": ["Mooner"],
         "parameters": [
           {
-            "name": "user_id",
+            "name": "sign_id",
             "in": "path",
-            "description": "친구 목록을 조회할 유저의 ID",
+            "description": "친구 목록을 조회할 유저의 sign_id",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2040,7 +2134,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/User"
+                        "$ref": "#/components/schemas/FollowingUser"
                       }
                     }
                   }
@@ -2057,19 +2151,22 @@
           "default": {
             "description": "기타 오류"
           }
-        }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
-    "/friends/{user_id}/followings/{following_id}/diaries": {
+    "/friends/{sign_id}/followings/{following_sign_id}/diaries": {
       "get": {
         "summary": "팔로잉하는 친구의 게시글(일기) 조회",
         "description": "유저의 팔로잉 목록에서 선택한 친구의 게시글(일기)을 조회합니다.",
         "tags": ["Mooner"],
         "parameters": [
           {
-            "name": "user_id",
+            "name": "sign_id",
             "in": "path",
-            "description": "게시글(일기)을 조회할 유저의 ID",
+            "description": "게시글(일기)을 조회할 유저의 sign_id",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2077,9 +2174,9 @@
             }
           },
           {
-            "name": "following_id",
+            "name": "following_sign_id",
             "in": "path",
-            "description": "유저가 조회할 친구의 ID (팔로우하는 친구의 ID)",
+            "description": "유저가 조회할 친구의 sign_id  (팔로우하는 친구의 sign_id )",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2119,7 +2216,10 @@
           "default": {
             "description": "기타 오류"
             }
-          }
+          },
+          "security": [
+            { "bearerAuth": [] }
+          ]
         }
       }
     },
@@ -2244,9 +2344,9 @@
       "TendencyUpdate": {
         "type": "object",
         "properties": {
-              "user_id": {
+              "sign_id": {
                 "type": "integer",
-                "description": "사용자 ID"
+                "description": "사용자 sign_id"
               },
               "user_tendency": {
                 "type": "string",
@@ -2262,10 +2362,10 @@
             "format": "int64",
             "description": "일기 ID"
           },
-          "user_id": {
+          "sign_id": {
             "type": "integer",
             "format": "int64",
-            "description": "사용자 ID"
+            "description": "사용자 sign_id"
           },
           "board_id": {
             "type": "integer",
@@ -2320,7 +2420,7 @@
         },
         "required": [
           "diary_id",
-          "user_id",
+          "sign_id",
           "board_id",
           "diary_title",
           "diary_content",
@@ -2481,10 +2581,10 @@
             "format": "int64",
             "description": "루틴 ID"
           },
-          "user_id": {
+          "sign_id": {
             "type": "integer",
             "format": "int64",
-            "description": "사용자 ID"
+            "description": "사용자 sign_id"
           },
           "description": {
             "type": "string",
@@ -2505,12 +2605,12 @@
             "description": "루틴 수정 시각"
           }
         },
-        "required": ["routine_id", "user_id", "description", "is_completed"]
+        "required": ["routine_id", "sign_id", "description", "is_completed"]
       },
       "RoutineCreate": {
         "type": "object",
         "properties": {
-          "user_id": {
+          "sign_id": {
             "type": "integer",
             "format": "int64",
             "description": "사용자 ID"
@@ -2525,7 +2625,7 @@
             "default": false
           }
         },
-        "required": ["user_id", "description"]
+        "required": ["sign_id", "description"]
       },
       "RoutineUpdate": {
         "type": "object",
@@ -2591,7 +2691,7 @@
                 "type": "string",
                 "description": "생성된 질문의 텍스트"
               },
-              "user_id": {
+              "sign_id": {
                 "type": "integer",
                 "description": "질문을 생성한 사용자의 ID"
               },
@@ -2627,7 +2727,7 @@
                 "type": "string",
                 "description": "답변의 텍스트"
               },
-              "user_id": {
+              "sign_id": {
                 "type": "integer",
                 "description": "답변을 작성한 사용자의 ID"
               },

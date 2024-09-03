@@ -8,6 +8,7 @@ const TodayAnswer = require('../models/today_answers');
 const MAX_TODOS_PER_DIARY = 5
 exports.createTodo = async (req, res) => {
     const { diary_id, description, is_completed } = req.body;
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
 
     try {
        
@@ -27,6 +28,7 @@ exports.createTodo = async (req, res) => {
             description,
             is_completed,
             diary_id,
+            sign_id: signId // 사용자 sign_id 추가
         });
 
         res.status(201).json({
@@ -41,8 +43,16 @@ exports.createTodo = async (req, res) => {
 
 exports.getTodo = async (req, res) => {
     const { todo_id } = req.params;
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
+
     try {
-        const todo = await Todo.findByPk(todo_id);
+        const todo = await Todo.findOne({
+            where: {
+                todo_id,
+                sign_id: signId // 사용자 sign_id로 필터링
+            }
+        });
+
         if (!todo) {
             return res.status(404).json({ message: 'Todo not found' });
         }
@@ -60,8 +70,15 @@ exports.getTodo = async (req, res) => {
 
 exports.updateTodo = async (req, res) => {
     const { todo_id } = req.params;
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
+    
     try {
-        const todo = await Todo.findByPk(todo_id);
+        const todo = await Todo.findOne({
+            where: {
+                todo_id,
+                sign_id: signId // 사용자 sign_id로 필터링
+            }
+        });
         if (!todo) {
             return res.status(404).json({ message: 'Todo not found' });
         }
@@ -84,8 +101,16 @@ exports.updateTodo = async (req, res) => {
 
 exports.deleteTodo = async (req, res) => {
     const { todo_id } = req.params;
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
+
     try {
-        const todo = await Todo.findByPk(todo_id);
+        const todo = await Todo.findOne({
+            where: {
+                todo_id,
+                sign_id: signId // 사용자 sign_id로 필터링
+            }
+        });
+
         if (!todo) {
             return res.status(404).json({ message: 'Todo not found' });
         }
@@ -104,12 +129,11 @@ exports.deleteTodo = async (req, res) => {
 const MAX_ROUTINES_PER_USER = 3; //루틴 개수 제한
 
 exports.createRoutine = async (req, res) => {
-    const userId = req.body.user_id;
-
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
     try {
         
         const routineCount = await Routine.count({
-            where: { user_id: userId }
+            where: { sign_id: signId }
         });
 
        
@@ -124,7 +148,7 @@ exports.createRoutine = async (req, res) => {
             description: req.body.description,
             is_completed: req.body.is_completed || false,
             diary_id: req.body.diary_id,
-            user_id: userId,
+            sign_id: signId,
         });
 
         res.status(201).json({
@@ -138,8 +162,15 @@ exports.createRoutine = async (req, res) => {
 };
 exports.getRoutine = async (req, res) => {
     const { routine_id } = req.params;
-    try {
-        const routine = await Routine.findByPk(routine_id);
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
+
+   try {
+        const routine = await Routine.findOne({
+            where: {
+                routine_id,
+                sign_id: signId // 사용자 sign_id로 필터링
+            }
+        });
         if (!routine) {
             return res.status(404).json({ message: 'Routine not found' });
         }
@@ -155,10 +186,16 @@ exports.getRoutine = async (req, res) => {
 };
 exports.updateRoutine = async (req, res) => {
     const { routine_id } = req.params;
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
     const { description, is_completed } = req.body;
 
     try {
-        const routine = await Routine.findByPk(routine_id);
+        const routine = await Routine.findOne({
+            where: {
+                routine_id,
+                sign_id: signId // 사용자 sign_id로 필터링
+            }
+        });
         if (!routine) {
             return res.status(404).json({ message: 'Routine not found' });
         }
@@ -179,9 +216,16 @@ exports.updateRoutine = async (req, res) => {
 };
 exports.deleteRoutine = async (req, res) => {
     const { routine_id } = req.params;
+    const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
 
     try {
-        const routine = await Routine.findByPk(routine_id);
+        const routine = await Routine.findOne({
+            where: {
+                routine_id,
+                sign_id: signId // 사용자 sign_id로 필터링
+            }
+        });
+
         if (!routine) {
             return res.status(404).json({ message: 'Routine not found' });
         }
@@ -201,11 +245,11 @@ exports.deleteRoutine = async (req, res) => {
 exports.createQuestion = async (req, res) => {
     try { 
         const { question_text } = req.body;
-        const userId = res.locals.decoded.userId; // JWT에서 가져온 사용자 ID
-        
+        const signId = res.locals.decoded.sign_id; // JWT에서 가져온 sign_id
+
         const newQuestion = await TodayQuestion.create({
             question_text,
-            user_id: userId // 질문 생성 시 사용자 ID를 저장
+            sign_id: signId // 질문 생성 시 사용자 sign_id를 저장
         });
             
         res.status(201).json({
@@ -223,7 +267,7 @@ exports.createAnswer = async (req, res) => {
     try {
         const { question_id } = req.params;
         const { answer_text } = req.body;
-        const userId = res.locals.decoded.userId;
+        const signId = res.locals.decoded.sign_id;
 
         const question = await TodayQuestion.findByPk(question_id);
         if (!question) {
@@ -233,7 +277,7 @@ exports.createAnswer = async (req, res) => {
         const newAnswer = await TodayAnswer.create({
             question_id,
             answer_text,
-            user_id: userId
+            sign_id: signId
         });
 
         res.status(201).json({
@@ -252,12 +296,12 @@ exports.updateAnswer = async (req, res) => {
     try {
         const { answer_id } = req.params;
         const { answer_text } = req.body;
-        const userId = res.locals.decoded.userId; 
+        const signId = res.locals.decoded.sign_id; 
 
         const answer = await TodayAnswer.findOne({
             where: {
                 answer_id,
-                user_id: userId 
+                sign_id: signId 
             },
         });
     
@@ -265,7 +309,7 @@ exports.updateAnswer = async (req, res) => {
             return res.status(404).json({ message: '답변을 찾을 수 없습니다.' });
         }
 
-        if (answer.user_id !== userId) {
+        if (answer.sign_id !== signId) {
             return res.status(403).json({ message: '이 답변을 수정할 권한이 없습니다.' });
         }
     
@@ -287,13 +331,13 @@ exports.updateAnswer = async (req, res) => {
 exports.deleteAnswer = async (req, res) => {
     try {
         const { question_id, answer_id } = req.params;
-        const userId = res.locals.decoded.userId; 
+        const signId = res.locals.decoded.sign_id;
 
         const answer = await TodayAnswer.findOne({
             where: {
                 answer_id,
                 question_id,
-                user_id: userId
+                sign_id: signId
             },
         });
 
@@ -301,7 +345,7 @@ exports.deleteAnswer = async (req, res) => {
             return res.status(404).json({ message: '답변을 찾을 수 없습니다.' });
         }
 
-        if (answer.user_id !== userId) {
+        if (answer.sign_id !== signId) {
             return res.status(403).json({ message: '이 답변을 삭제할 권한이 없습니다.' });
         }
 

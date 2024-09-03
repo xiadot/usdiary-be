@@ -7,8 +7,13 @@ const Board = require('../models/board');
 exports.renderDiary = async (req, res) => {
   try {
       const diaryId = req.params.diary_id;
-      const diary = await Diary.findByPk(diaryId);
-
+      const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
+      const diary = await Diary.findOne({
+        where: {
+            diary_id: diaryId,
+            sign_id: signId // 사용자 sign_id로 필터링
+        }
+    });
       if (!diary) {
           return res.status(404).json({ message: 'Diary not found' });
       }
@@ -20,26 +25,35 @@ exports.renderDiary = async (req, res) => {
 };
 
 //일기 작성
-exports.createDiary = (req, res) => {
-  const newDiary = {
-      diary_title: req.body.diary_title,
-      diary_content: req.body.diary_content,
-      diary_cate: req.body.diary_cate,
-      access_level: req.body.access_level,
-      board_id: req.body.board_id,
-      diary_emotion: req.body.diary_emotion,
-      cate_num: req.body.cate_num,
-      post_photo: req.file ? req.file.path : null
-  };
-  console.log(newDiary)
-  // 예시 응답 데이터
-  res.status(201).json({
-      message: 'Diary created',
-      data: newDiary
-  });
+exports.createDiary = async (req, res) => {
+  const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
+  
+  try {
+    const newDiary = await Diary.create({
+        diary_title: req.body.diary_title,
+        diary_content: req.body.diary_content,
+        diary_cate: req.body.diary_cate,
+        access_level: req.body.access_level,
+        board_id: req.body.board_id,
+        diary_emotion: req.body.diary_emotion,
+        cate_num: req.body.cate_num,
+        post_photo: req.file ? req.file.path : null,
+        sign_id: signId // JWT에서 가져온 sign_id 사용
+    });
+
+    res.status(201).json({
+        message: 'Diary created successfully',
+        data: newDiary
+    });
+} catch (error) {
+    console.error('Error creating diary:', error);
+    res.status(500).json({ error: 'An error occurred while creating the diary' });
+  }
 };
 exports.updateDiary = async (req, res) => {
     const { diary_id } = req.params;
+    const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
+
     const {
       diary_title,
       diary_content,
@@ -48,11 +62,14 @@ exports.updateDiary = async (req, res) => {
       diary_emotion,
       cate_num,
     } = req.body;
-  
+    
     try {
-      // 다이어리 항목 찾기
-      const diary = await Diary.findByPk(diary_id);
-  
+      const diary = await Diary.findOne({
+          where: {
+              diary_id,
+              sign_id: signId // 사용자 sign_id로 필터링
+          }
+      });
       if (!diary) {
         return res.status(404).json({ message: 'Diary not found' });
       }
@@ -82,21 +99,22 @@ exports.updateDiary = async (req, res) => {
 // 일기 삭제 
 exports.deleteDiary = async (req, res) => {
     const diaryId = req.params.diary_id;
+    const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
     try {
-        // 일기가 존재하는지 확인
-        const diary = await Diary.findByPk(diaryId);
-
+      // 일기가 존재하는지 확인
+      const diary = await Diary.findOne({
+          where: {
+              diary_id: diaryId,
+              sign_id: signId // 사용자 sign_id로 필터링
+          }
+      });
         if (!diary) {
             return res.status(404).json({ message: 'Diary not found' });
         }
 
         // 일기 삭제
-        await Diary.destroy({
-            where: {
-                diary_id: diaryId
-            }
-        });
+        await diary.destroy();
 
         return res.status(200).json({ message: 'Diary deleted successfully' });
     } catch (error) {
@@ -114,7 +132,7 @@ exports.sortDiary = async (req, res) => {
       const diary = await Diary.findAll({
           include: {
               model: User,
-              attributes: ['user_id'],
+              attributes: ['sign_id'],
           },
           order: [['createdAt', 'DESC']],
           limit: parseInt(limit),  // 항목 수 제한
@@ -147,7 +165,7 @@ exports.sortWeeklyViews = async (req, res) => {
 
       const diary = await Diary.findAll({
         include: [
-          { model: User, attributes: ['user_id'] },
+          { model: User, attributes: ['sign_id'] },
           { model: Board, attributes: ['board_name'] },
         ],
         where: {
@@ -184,7 +202,7 @@ exports.sortWeeklyLikes = async (req, res) => {
 
       const diary = await Diary.findAll({
         include: [
-          { model: User, attributes: ['user_id'] },
+          { model: User, attributes: ['sign_id'] },
           { model: Board, attributes: ['board_name'] },
         ],
         where: {

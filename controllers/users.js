@@ -33,7 +33,7 @@ exports.login = async (req, res) => {
         console.log('Password validated successfully.');
 
         const token = jwt.sign(
-            { userId: user.user_id },
+            { sign_id: user.sign_id }, // sign_id를 JWT 토큰에 포함
             process.env.JWT_SECRET,
             { expiresIn: '24h' } // 토큰 24시간 만료
         );
@@ -130,16 +130,16 @@ exports.findPwd = async (req, res) => {
 // 유저 성향 업데이트
 exports.updateTendency = async (req, res) => {
     try {
-        const { user_id } = req.params; 
+        const { sign_id } = req.params;  // URL 파라미터에서 sign_id 가져오기
         const { selection } = req.body;  
 
         const decoded = res.locals.decoded;
 
-        if (decoded.userId !== parseInt(user_id, 10)) {
+        if (decoded.sign_id !== sign_id) { // JWT의 sign_id와 URL 파라미터의 sign_id 비교
             return res.status(403).json({ message: '잘못된 사용자 ID입니다.' });
         }
 
-        const user = await User.findByPk(user_id);
+        const user = await User.findOne({ where: { sign_id } }); // sign_id로 사용자 조회
 
         if (!user) {
             return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
@@ -169,10 +169,10 @@ exports.updateTendency = async (req, res) => {
 
         return res.status(200).json({ 
             message: '성향이 성공적으로 수정되었습니다.', 
-            data: { user_id: user.user_id, 
+            data: { sign_id: user.sign_id,  // sign_id 반환
             user_tendency: user.user_tendency  }});
     } catch (error) {
-        console.error('유저 성향 선택 중 오류발생', error);
+        console.error('유저 성향 선택 중 오류 발생:', error);
         return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
@@ -221,7 +221,7 @@ exports.googleCallback = async (req, res) => {
             console.log('Google 계정으로 이미 가입된 사용자입니다:', user.user_email);
 
             const token = jwt.sign(
-                { userId: user.user_id },
+                { sign_id: user.sign_id }, // sign_id로 토큰 발급
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' } 
             );
@@ -241,7 +241,7 @@ exports.googleCallback = async (req, res) => {
             console.log('신규 사용자로 Google 계정 등록:', newUser.user_email);
 
             const token = jwt.sign(
-                { userId: newUser.user_id },
+                { sign_id: newUser.sign_id }, // sign_id로 토큰 발급
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
             );

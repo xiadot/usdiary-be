@@ -14,18 +14,17 @@ const { sortDiary, sortWeeklyViews, sortWeeklyLikes, renderDiary,createDiary,upd
 const { verifyToken } = require('../middlewares/jwt');
 
 // 일기 목록 페이지 렌더링 (최신순)
-router.get('/', verifyToken, sortDiary);
+router.get('/', sortDiary);
 // (조회수 높은순)
-router.get('/weekly-views', verifyToken, sortWeeklyViews);
+router.get('/weekly-views', sortWeeklyViews);
 // (좋아요 높은순)
-router.get('/weekly-likes', verifyToken, sortWeeklyLikes);
+router.get('/weekly-likes', sortWeeklyLikes);
 
 
 // 일기 작성 페이지 렌더링
-
 router.get('/:diary_id', verifyToken, renderDiary);
 
-// user_id를 URL 파라미터로 받도록 설정
+// sign_id를 URL 파라미터로 받도록 설정
 router.post('/', upload.single('post_photo'), verifyToken, createDiary);
 router.patch('/:diary_id', upload.single('post_photo'), verifyToken, updateDiary);
 
