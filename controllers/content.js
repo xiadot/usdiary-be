@@ -229,10 +229,6 @@ exports.createAnswer = async (req, res) => {
         if (!question) {
             return res.status(404).json({ message: '질문을 찾을 수 없습니다.' });
         }
-        
-        if (question.user_id !== userId) {
-            return res.status(403).json({ message: '이 질문에 답변할 권한이 없습니다.' });
-        }
 
         const newAnswer = await TodayAnswer.create({
             question_id,
@@ -254,14 +250,13 @@ exports.createAnswer = async (req, res) => {
 // TodayAnswer 수정
 exports.updateAnswer = async (req, res) => {
     try {
-        const { question_id, answer_id } = req.params;
+        const { answer_id } = req.params;
         const { answer_text } = req.body;
         const userId = res.locals.decoded.userId; 
 
         const answer = await TodayAnswer.findOne({
             where: {
                 answer_id,
-                question_id,
                 user_id: userId 
             },
         });

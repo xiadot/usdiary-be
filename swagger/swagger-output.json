@@ -561,6 +561,21 @@
           "500": {
             "description": "서버 오류가 발생했습니다."
           }
+        }, 
+        "security": [
+          { "bearerAuth": [] }
+        ]
+      }
+    },
+    "/users/login/google": {
+      "get": {
+        "summary": "Google 로그인 페이지로 리디렉션",
+        "tags": ["User"],
+        "description": "Google 로그인 페이지로 리디렉션합니다. 사용자가 Google 계정으로 인증을 진행한 후, 인증 코드를 얻을 수 있습니다.",
+        "responses": {
+          "302": {
+            "description": "Google 로그인 페이지로 리디렉션됩니다."
+          }
         }
       }
     },
@@ -593,10 +608,15 @@
                       "description": "로그인 성공 메시지",
                       "example": "Google 로그인 성공"
                     },
-                    "token": {
-                      "type": "string",
-                      "description": "JWT 인증 토큰",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "description": "JWT 인증 토큰",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        }
+                      }
                     }
                   }
                 }
@@ -615,10 +635,14 @@
                       "description": "신규 가입 성공 메시지",
                       "example": "Google 계정으로 신규 가입 및 로그인 성공"
                     },
-                    "token": {
-                      "type": "string",
-                      "description": "JWT 인증 토큰",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        }
+                      }
                     }
                   }
                 }
@@ -1325,7 +1349,7 @@
         }
       }
     },
-    "/questions": {
+    "/contents/questions": {
       "post": {
         "summary": "오늘의 질문 생성",
         "tags": ["Today's Q&A"],
@@ -1354,10 +1378,15 @@
           "500": {
             "description": "서버 오류로 질문 생성에 실패했습니다."
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
-    "/questions/{question_id}/answers": {
+    "/contents/questions/{question_id}/answers": {
       "post": {
         "summary": "오늘의 답변 등록",
         "tags": ["Today's Q&A"],
@@ -1403,24 +1432,20 @@
           "500": {
             "description": "서버 오류로 답변 생성에 실패했습니다."
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
-    "/questions/{question_id}/answers/{answer_id}": {
+    "/contents/questions/{question_id}/answers/{answer_id}": {
       "patch": {
         "summary": "오늘의 답변 수정",
         "tags": ["Today's Q&A"],
         "description": "사용자가 특정 질문에 대한 기존 답변을 수정합니다. 사용자는 JWT를 통해 인증되며, 해당 답변에 대한 권한이 확인됩니다.",
         "parameters": [
-          {
-            "name": "question_id",
-            "in": "path",
-            "required": true,
-            "description": "수정할 답변이 속한 질문의 ID",
-            "schema": {
-              "type": "integer"
-            }
-          },
           {
             "name": "answer_id",
             "in": "path",
@@ -1447,7 +1472,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AnswerResponse"
+                  "$ref": "#/components/schemas/UpdateAnswerSuccessResponse"
                 }
               }
             }
@@ -1461,7 +1486,12 @@
           "500": {
             "description": "서버 오류로 답변 수정에 실패했습니다."
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -1900,7 +1930,8 @@
             "description": "생성할 답변의 텍스트",
             "example": "오늘의 질문에 대한 답변입니다."
           }
-        }
+        },
+        "required": ["answer_text"]
       },
       "UpdateAnswerRequest": {
         "type": "object",
@@ -1910,7 +1941,8 @@
             "description": "수정할 답변의 텍스트",
             "example": "수정된 답변 내용입니다."
           }
-        }
+        },
+        "required": ["answer_text"]
       },
       "QuestionResponse": {
         "type": "object",
@@ -1957,7 +1989,7 @@
             "properties": {
               "answer_id": {
                 "type": "integer",
-                "description": "생성되거나 수정된 답변의 ID"
+                "description": "생성된 답변의 ID"
               },
               "question_id": {
                 "type": "integer",
@@ -1979,9 +2011,18 @@
               "updated_at": {
                 "type": "string",
                 "format": "date-time",
-                "description": "답변이 수정된 시간 (수정된 경우)"
+                "description": "답변이 수정된 시간"
               }
             }
+          }
+        }
+      },
+      "UpdateAnswerSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "답변이 성공적으로 수정되었습니다."
           }
         }
       }
