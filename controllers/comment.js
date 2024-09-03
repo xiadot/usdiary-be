@@ -17,7 +17,7 @@ exports.createComment = async (req, res) => {
 
         // 새로운 댓글 생성
         const comment = await Comment.create({
-            content: content,
+            comment_text: content,
             user_id: userId,
             diary_id: diaryId
         });
@@ -72,7 +72,7 @@ exports.renderComments = async (req, res) => {
       const comments = await Comment.findAll({
           where: { diary_id: diaryId },
           include: [
-            { model: User, attributes: ['user_id', 'username'] },
+            { model: User, attributes: ['user_id', 'user_name'] },
           ],
           order: [['createdAt', 'ASC']]
       });
