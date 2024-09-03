@@ -1,5 +1,6 @@
 const Friend = require('../models/friend');
 const User = require('../models/user');
+const Diary = require('../models/diary');
 
 // 맞팔 관계
 exports.getFriends = async (req, res) => {
@@ -123,8 +124,6 @@ exports.deleteFollowers = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while deleting the follower' });
     }
 };
-
-
 // 4. 팔로잉 삭제
 exports.deleteFollowing = async (req, res) => {
     try {
@@ -147,5 +146,44 @@ exports.deleteFollowing = async (req, res) => {
     } catch (error) {
         console.error('Error deleting following:', error);
         res.status(500).json({ error: 'An error occurred while deleting the following' });
+    }
+};
+// 5. 친구 게시글 조회
+exports.getFriendDiaries = async (req, res) => {
+    try {
+        const userId = req.params.user_id; // 현재 사용자 ID
+        const followingId = req.params.following_id; // 조회할 친구의 ID (팔로우하는 친구 ID)
+
+        // 현재 유저가 팔로우하고 있는 친구 목록 조회
+        const following = await Friend.findAll({
+            where: { follower_id: userId },
+            attributes: ['following_id']
+        });
+
+        // 팔로우하는 친구 목록에서 선택한 친구 ID가 존재하는지 확인
+        const followingIds = following.map(f => f.following_id);
+        if (!followingIds.includes(Number(followingId))) {
+            return res.status(404).json({ message: 'Selected following ID is not in the following list' });
+        }
+
+        // 선택된 친구의 게시글 조회
+        const friendPosts = await Diary.findAll({
+            where: {
+                user_id: followingId
+            },
+            order: [['created_at', 'DESC']] // 최신 게시글 순으로 정렬
+        });
+
+        if (!friendPosts.length) {
+            return res.status(404).json({ message: 'No posts found from the selected following' });
+        }
+
+        res.status(200).json({
+            message: 'Friend posts retrieved successfully',
+            data: friendPosts
+        });
+    } catch (error) {
+        console.error('Error retrieving friend posts:', error);
+        res.status(500).json({ error: 'An error occurred while retrieving friend posts' });
     }
 };

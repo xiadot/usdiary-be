@@ -1800,8 +1800,70 @@
           }
         }
       }
+    },
+"/users/{user_id}/followings/{following_id}/diaries": {
+  "get": {
+    "summary": "팔로잉하는 친구의 게시글(일기) 조회",
+    "description": "유저의 팔로잉 목록에서 선택한 친구의 게시글(일기)을 조회합니다.",
+    "tags": ["Mooner"],
+    "parameters": [
+      {
+        "name": "user_id",
+        "in": "path",
+        "description": "게시글(일기)을 조회할 유저의 ID",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      {
+        "name": "following_id",
+        "in": "path",
+        "description": "유저가 조회할 친구의 ID (팔로우하는 친구의 ID)",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "성공적으로 친구의 게시글(일기)을 조회했습니다.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Friend diaries retrieved successfully"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Diary" 
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "유저 또는 친구를 찾을 수 없거나 친구의 게시글이 없습니다."
+      },
+      "500": {
+        "description": "Internal Server Error"
+      },
+      "default": {
+        "description": "기타 오류"
+        }
+      }
     }
-  },
+  }
+},
 
   "components": {
     "schemas": {
