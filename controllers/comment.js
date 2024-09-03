@@ -7,18 +7,24 @@ exports.createComment = async (req, res) => {
     try {
         const diaryId = req.params.diary_id;
         const { content } = req.body;
-        const userId = req.user.id; // 인증된 사용자의 ID를 가져오기
+        const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
         // 해당 일기가 존재하는지 확인
         const diary = await Diary.findByPk(diaryId);
         if (!diary) {
             return res.status(404).json({ message: 'Diary not found' });
         }
+         // 해당 사용자의 ID 조회
+        const user = await User.findOne({ where: { sign_id: signId } });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         // 새로운 댓글 생성
         const comment = await Comment.create({
             comment_text: content,
-            user_id: userId,
+            sign_id: signId, // 사용자 sign_id 추가
             diary_id: diaryId
         });
 
@@ -35,7 +41,7 @@ exports.updateComment = async (req, res) => {
     try {
         const { diaryId, commentId } = req.params;
         const { content } = req.body;
-        const userId = req.user.id; // 인증된 사용자의 ID를 가져오기
+        const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
         // 해당 일기가 존재하는지 확인
         const diary = await Diary.findByPk(diaryId);
@@ -45,7 +51,7 @@ exports.updateComment = async (req, res) => {
 
         // 수정할 댓글이 존재하는지 확인
         const comment = await Comment.findOne({
-            where: { comment_id: commentId, diary_id: diaryId, user_id: userId }
+            where: { comment_id: commentId, diary_id: diaryId,  sign_id: signId }
         });
 
         if (!comment) {
@@ -63,48 +69,75 @@ exports.updateComment = async (req, res) => {
     }
 };
 
-// 댓글 조회
+// 댓글 조회 (JWT 토큰 인증 추가)
 exports.renderComments = async (req, res) => {
-  try {
-      const diaryId = req.params.diary_id;
+    try {
+        const diaryId = req.params.diary_id;
+        const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기 (필요시 사용)
 
-      // 해당 일기에 대한 모든 댓글을 조회
-      const comments = await Comment.findAll({
-          where: { diary_id: diaryId },
-          include: [
-            { model: User, attributes: ['user_id', 'user_name'] },
-          ],
-          order: [['createdAt', 'ASC']]
-      });
+        // 해당 일기에 대한 모든 댓글을 조회
+        const comments = await Comment.findAll({
+            where: { diary_id: diaryId },
+            include: [
+                { model: User, attributes: ['sign_id', 'user_name'] },
+            ],
+            order: [['createdAt', 'ASC']]
+        });
 
-      if (!comments) {
-          return res.status(404).json({ message: 'No comments found' });
-      }
-      
-      res.json(comments);
-  } catch (error) {
-      console.error('Error fetching comments:', error);
-      res.status(500).json({ message: 'Server error', error });
-  }
+        if (!comments) {
+            return res.status(404).json({ message: 'No comments found' });
+        }
+        
+        res.json(comments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+    };// 댓글 조회 
+    exports.renderComments = async (req, res) => {
+    try {
+        const diaryId = req.params.diary_id;
+        const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
+
+        // 해당 일기에 대한 모든 댓글을 조회
+        const comments = await Comment.findAll({
+            where: { diary_id: diaryId },
+            include: [
+                { model: User, attributes: ['sign_id', 'user_name'] },
+            ],
+            order: [['createdAt', 'ASC']]
+        });
+
+        if (!comments) {
+            return res.status(404).json({ message: 'No comments found' });
+        }
+        
+        res.json(comments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ message: 'Server error', error });
+    }
 };
 
 // 댓글 삭제
 exports.deleteComment = async (req, res) => {
-  const commentId = req.params.comment_id;
+    const commentId = req.params.comment_id;
+  const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
-  try {
-      // 댓글이 존재하는지 확인
-      const comment = await Comment.findByPk(commentId);
+    try {
+    // 댓글이 존재하는지 확인
+    const comment = await Comment.findOne({
+        where: {
+            comment_id: commentId,
+            sign_id: signId // 해당 사용자에 대한 댓글인지 확인
+        }
+    });
 
       if (!comment) {
           return res.status(404).json({ message: 'Comment not found' });
       }
 
-      await Comment.destroy({
-          where: {
-              comment_id: commentId
-          }
-      });
+      await comment.destroy();
 
       return res.status(200).json({ message: 'Comment deleted successfully' });
   } catch (error) {

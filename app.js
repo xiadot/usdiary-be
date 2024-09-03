@@ -47,7 +47,7 @@ app.use('/users', userRoutes);
 app.use('/register', registerRoutes);
 app.use('/diaries', commentRoutes);
 app.use('/contents', contentRoutes);
-app.use('/users', friendRoutes);
+app.use('/friends', friendRoutes);
 
 // 404 오류 처리
 app.use((req, res, next) => {

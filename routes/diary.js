@@ -11,6 +11,7 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../multer/multer'); // multer 설정 가져오기
 const { sortDiary, sortWeeklyViews, sortWeeklyLikes, renderDiary,createDiary,updateDiary, deleteDiary } = require('../controllers/diary');
+const { verifyToken } = require('../middlewares/jwt');
 
 // 일기 목록 페이지 렌더링 (최신순)
 router.get('/', sortDiary);
@@ -21,14 +22,13 @@ router.get('/weekly-likes', sortWeeklyLikes);
 
 
 // 일기 작성 페이지 렌더링
+router.get('/:diary_id', verifyToken, renderDiary);
 
-router.get('/:diary_id', renderDiary);
-
-// user_id를 URL 파라미터로 받도록 설정
-router.post('/', upload.single('post_photo'), createDiary);
-router.patch('/:diary_id', upload.single('post_photo'), updateDiary);
+// sign_id를 URL 파라미터로 받도록 설정
+router.post('/', upload.single('post_photo'), verifyToken, createDiary);
+router.patch('/:diary_id', upload.single('post_photo'), verifyToken, updateDiary);
 
 //일기 삭제
-router.delete('/:diary_id', deleteDiary);
+router.delete('/:diary_id', verifyToken, deleteDiary);
 
 module.exports = router;
