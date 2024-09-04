@@ -57,7 +57,11 @@ class User extends Sequelize.Model {
           type: Sequelize.BIGINT,
           allowNull: false,
           defaultValue: 0,
-        }
+        },
+        last_login: {
+          type: Sequelize.DATE, // 최근 접속일 필드
+          allowNull: true,
+        },
       },
       {
         sequelize,

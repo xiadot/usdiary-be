@@ -70,12 +70,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "user_email": {
                     "type": "string",
                     "example": "user@example.com"
                   }
                 },
-                "required": ["email"]
+                "required": ["user_email"]
               }
             }
           }
@@ -156,7 +156,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "user_email": {
                     "type": "string",
                     "example": "user@example.com"
                   },
@@ -165,7 +165,7 @@
                     "example": "123456"
                   }
                 },
-                "required": ["email", "verificationCode"]
+                "required": ["user_email", "verificationCode"]
               }
             }
           }
