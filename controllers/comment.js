@@ -29,7 +29,7 @@ exports.createComment = async (req, res) => {
         });
 
         // 생성된 댓글 반환
-        res.status(201).json(comment);
+        res.status(201).json( {message: '댓글이 성공적으로 생성되었습니다.',data: {comment}});
     } catch (error) {
         console.error('Error creating comment:', error);
         res.status(500).json({ message: 'Server error', error });
@@ -62,7 +62,7 @@ exports.updateComment = async (req, res) => {
         comment.content = content;
         await comment.save();
 
-        res.status(200).json(comment);
+        res.status(200).json({message: '댓글이 성공적으로 수정되었습니다.',data: {comment}});
     } catch (error) {
         console.error('Error updating comment:', error);
         res.status(500).json({ message: 'Server error', error });
@@ -88,7 +88,7 @@ exports.renderComments = async (req, res) => {
             return res.status(404).json({ message: 'No comments found' });
         }
         
-        res.json(comments);
+        res.json({data:comments});
     } catch (error) {
         console.error('Error fetching comments:', error);
         res.status(500).json({ message: 'Server error', error });
@@ -112,7 +112,7 @@ exports.renderComments = async (req, res) => {
             return res.status(404).json({ message: 'No comments found' });
         }
         
-        res.json(comments);
+        res.json({data:comments});
     } catch (error) {
         console.error('Error fetching comments:', error);
         res.status(500).json({ message: 'Server error', error });
