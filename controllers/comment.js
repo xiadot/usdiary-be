@@ -1,6 +1,7 @@
 const Comment = require('../models/comment');
 const Diary = require('../models/diary');
 const User = require('../models/user');
+const Profile = require('../models/profile');
 
 // 댓글 작성
 exports.createComment = async (req, res) => {
@@ -69,47 +70,58 @@ exports.updateComment = async (req, res) => {
     }
 };
 
-// 댓글 조회 (JWT 토큰 인증 추가)
+// 댓글 조회 
 exports.renderComments = async (req, res) => {
     try {
         const diaryId = req.params.diary_id;
-        const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기 (필요시 사용)
-
-        // 해당 일기에 대한 모든 댓글을 조회
-        const comments = await Comment.findAll({
-            where: { diary_id: diaryId },
-            include: [
-                { model: User, attributes: ['sign_id', 'user_name'] },
-            ],
-            order: [['createdAt', 'ASC']]
-        });
-
-        if (!comments) {
-            return res.status(404).json({ message: 'No comments found' });
-        }
-        
-        res.json(comments);
-    } catch (error) {
-        console.error('Error fetching comments:', error);
-        res.status(500).json({ message: 'Server error', error });
-    }
-    };// 댓글 조회 
-    exports.renderComments = async (req, res) => {
-    try {
-        const diaryId = req.params.diary_id;
+        const commentId = req.params.comment_id; // 특정 댓글 ID 가져오기
         const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
-        // 해당 일기에 대한 모든 댓글을 조회
-        const comments = await Comment.findAll({
-            where: { diary_id: diaryId },
-            include: [
-                { model: User, attributes: ['sign_id', 'user_name'] },
-            ],
-            order: [['createdAt', 'ASC']]
-        });
+        let comments;
 
-        if (!comments) {
-            return res.status(404).json({ message: 'No comments found' });
+        if (commentId) {
+            // 특정 댓글 조회
+            comments = await Comment.findOne({
+                where: { diary_id: diaryId, id: commentId },
+                include: [
+                    { 
+                        model: User, 
+                        attributes: ['sign_id', 'user_nick'],
+                        include: [
+                            {
+                                model: Profile, 
+                                attributes: ['profile_img']
+                            }
+                        ]
+                    },
+                ],
+            });
+            
+            if (!comments) {
+                return res.status(404).json({ message: 'Comment not found' });
+            }
+        } else {
+            // 해당 일기에 대한 모든 댓글을 조회
+            comments = await Comment.findAll({
+                where: { diary_id: diaryId },
+                include: [
+                    { 
+                        model: User, 
+                        attributes: ['sign_id', 'user_nick'],
+                        include: [
+                            {
+                                model: Profile, 
+                                attributes: ['profile_img'] 
+                            }
+                        ]
+                    },
+                ],
+                order: [['createdAt', 'ASC']]
+            });
+
+            if (!comments || comments.length === 0) {
+                return res.status(404).json({ message: 'No comments found' });
+            }
         }
         
         res.json(comments);

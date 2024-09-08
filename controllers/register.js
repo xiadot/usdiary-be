@@ -111,6 +111,7 @@ exports.register = async (req, res) => {
             user_pwd: hashedPassword,
             user_email: email,
             user_name: userName,
+            user_phone: phone,
             user_gender: gender === 'male' ? true : false,
             user_birthday: new Date(birthdate),
             verificationToken: crypto.randomBytes(32).toString('hex'),
