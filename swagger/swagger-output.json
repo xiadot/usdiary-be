@@ -2162,7 +2162,7 @@
       }
     },
     "/friends/follow-request/handle": {
-      "patch": {
+      "post": {
         "summary": "팔로우 요청 처리",
         "tags": ["Mooner"],
         "description": "들어온 팔로우 요청을 수락하거나 거절합니다.",
