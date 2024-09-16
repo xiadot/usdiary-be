@@ -58,6 +58,11 @@ class User extends Sequelize.Model {
           allowNull: false,
           defaultValue: 0,
         },
+        user_level: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          defaultValue: 1, // 기본 등급을 1로 설정
+        },
         last_login: {
           type: Sequelize.DATE, // 최근 접속일 필드
           allowNull: true,
