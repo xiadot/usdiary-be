@@ -9,13 +9,11 @@ class User extends Sequelize.Model {
           allowNull: false,
           primaryKey: true,
           autoIncrement: true
-
         },
         sign_id: {
           type: Sequelize.STRING(255),
           allowNull: false,
           unique: true,
-
         },
         user_pwd: {
           type: Sequelize.STRING(255),
@@ -25,7 +23,13 @@ class User extends Sequelize.Model {
           type: Sequelize.STRING(255),
           allowNull: false,
         },
-
+        user_phone:{
+          type: Sequelize.STRING(15),
+          allowNull: false,
+          validate: {
+            is: /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/ 
+          }
+        },
         user_gender: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
@@ -88,6 +92,7 @@ class User extends Sequelize.Model {
       db.User.hasMany(db.TodayAnswer, {foreignKey: "user_id",sourceKey: "user_id", onDelete: "CASCADE"});
       db.User.hasMany(db.Point, {foreignKey: "user_id",sourceKey: "user_id", onDelete: "CASCADE"});
       db.User.hasMany(db.Routine, {foreignKey: "user_id",sourceKey: "user_id", onDelete: "CASCADE"});
+      db.User.hasOne(db.Profile, {foreignKey: 'user_id',sourceKey: 'user_id', onDelete: 'CASCADE',});
       // 이 유저가 팔로우하는 다른 유저들 (팔로잉 관계)
       db.User.belongsToMany(db.User, {through: db.Friend, foreignKey: 'follower_id', as: 'Following',otherKey: 'following_id'});
       // 이 유저를 팔로우하는 유저들 (팔로워 관계)
