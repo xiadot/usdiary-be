@@ -31,14 +31,16 @@ exports.login = async (req, res) => {
         }
 
         console.log('Password validated successfully.');
-
+               
+         // 로그인 성공 시 최근 접속일 업데이트
+        await user.update({ last_login: new Date() });
         const token = jwt.sign(
             { sign_id: user.sign_id }, // sign_id를 JWT 토큰에 포함
             process.env.JWT_SECRET,
             { expiresIn: '24h' } // 토큰 24시간 만료
         );
 
-        res.json({ message: '로그인 성공', data: { token } });
+        res.json({ message: '로그인 성공', data: { token ,user,last_login: user.last_login } });
     } catch (error) {
         console.error('로그인 처리 중 오류 발생:', error);
         res.status(500).json({ message: '내부 서버 오류입니다.' });
@@ -219,14 +221,15 @@ exports.googleCallback = async (req, res) => {
 
         if (user) {
             console.log('Google 계정으로 이미 가입된 사용자입니다:', user.user_email);
-
+            // 로그인 성공 시 최근 접속일 업데이트
+            await user.update({ last_login: new Date() });
             const token = jwt.sign(
                 { sign_id: user.sign_id }, // sign_id로 토큰 발급
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' } 
             );
 
-            res.status(200).json({ message: 'Google 로그인 성공', data: { token } });
+            res.status(200).json({ message: 'Google 로그인 성공', data: { token,user,last_login: user.last_login  } });
         } else {
             const newUser = await User.create({
                 user_email: email,
@@ -246,11 +249,24 @@ exports.googleCallback = async (req, res) => {
                 { expiresIn: '24h' }
             );
 
-            res.status(201).json({ message: 'Google 계정으로 신규 가입 및 로그인 성공', data: { token } });
+            res.status(201).json({ message: 'Google 계정으로 신규 가입 및 로그인 성공', data: { token,newUser } });
         }
 
     } catch (error) {
         console.error('Google OAuth 2.0 콜백 처리 중 오류 발생:', error);
         res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+// 로그아웃
+exports.logout = (req, res) => {
+    try {
+        // 쿠키에 저장된 토큰을 삭제하는 경우
+        res.clearCookie('token'); 
+
+        res.status(200).json({ message: '성공적으로 로그아웃되었습니다.' });
+    } catch (error) {
+        console.error('로그아웃 처리 중 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };

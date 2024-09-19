@@ -70,12 +70,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "user_email": {
                     "type": "string",
                     "example": "user@example.com"
                   }
                 },
-                "required": ["email"]
+                "required": ["user_email"]
               }
             }
           }
@@ -156,7 +156,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "user_email": {
                     "type": "string",
                     "example": "user@example.com"
                   },
@@ -165,7 +165,7 @@
                     "example": "123456"
                   }
                 },
-                "required": ["email", "verificationCode"]
+                "required": ["user_email", "verificationCode"]
               }
             }
           }
@@ -340,6 +340,43 @@
         }
       }
     },
+    "/users/logout": {
+  "post": {
+    "summary": "로그아웃",
+    "tags": ["User"],
+    "description": "사용자가 JWT 토큰을 사용하여 로그아웃합니다.",
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "성공적으로 로그아웃되었습니다.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "로그아웃 성공 메시지",
+                  "example": "성공적으로 로그아웃되었습니다."
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "인증되지 않은 사용자입니다."
+      },
+      "500": {
+        "description": "Internal Server Error"
+      }
+    }
+  }
+},
     "/users/findID": {
       "post": {
         "summary": "아이디 찾기",
@@ -2221,8 +2258,148 @@
             { "bearerAuth": [] }
           ]
         }
+      },
+  "/mypages/profiles/{user_id}": {
+  "get": {
+    "summary": "개인정보 확인",
+    "description": "주어진 user_id를 사용하여 사용자의 개인정보를 조회합니다.",
+    "tags": ["MyPage"],
+    "parameters": [
+      {
+        "name": "user_id",
+        "in": "path",
+        "description": "조회할 사용자의 ID",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "사용자 정보 조회 성공",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProfileResponse"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "해당 사용자가 존재하지 않습니다."
+      },
+      "500": {
+        "description": "사용자 정보를 조회하는 중 오류가 발생했습니다."
+      },
+      "default": {
+        "description": "기타 오류"
       }
     },
+    "security": [
+      { "bearerAuth": [] }
+    ]
+  },
+  "put": {
+    "summary": "개인정보 수정",
+    "description": "주어진 user_id를 사용하여 사용자의 개인정보를 수정합니다.",
+    "tags": ["MyPage"],
+    "parameters": [
+      {
+        "name": "user_id",
+        "in": "path",
+        "description": "수정할 사용자의 ID",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ProfileUpdateRequest"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "사용자 정보 수정 성공",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProfileUpdateResponse"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "잘못된 요청 데이터"
+      },
+      "404": {
+        "description": "해당 사용자가 존재하지 않습니다."
+      },
+      "500": {
+        "description": "사용자 정보를 수정하는 중 오류가 발생했습니다."
+      },
+      "default": {
+        "description": "기타 오류"
+      }
+    },
+    "security": [
+      { "bearerAuth": [] }
+    ]
+  }
+},
+"/mypages/diaries/{createdAt}": {
+  "get": {
+    "summary": "캘린더 기록 조회",
+    "description": "선택된 날짜에 작성된 일기들을 조회합니다.",
+    "tags": ["MyPage"],
+    "parameters": [
+      {
+        "name": "date",
+        "in": "path",
+        "description": "조회할 날짜 (형식: YYYY-MM-DD)",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "일기 조회 성공",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DiariesByDateResponse"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "해당 날짜에 작성된 일기가 없습니다."
+      },
+      "500": {
+        "description": "서버 오류"
+      },
+      "default": {
+        "description": "기타 오류"
+      }
+    },
+    "security": [
+      { "bearerAuth": [] }
+    ]
+  }
+ }
+},
 
   "components": {
     "schemas": {
@@ -2240,6 +2417,13 @@
           }
         },
         "required": ["sign_id", "password"]
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
       },
       "FindID": {
         "type": "object",
@@ -2791,16 +2975,165 @@
           "description": "사용자의 성향"
         }
       }
+    },
+  "ProfileResponse": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "example": "사용자 정보 조회 성공"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "sign_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user_nick": {
+            "type": "string"
+          },
+          "user_email": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "user_phone": {
+            "type": "string"
+          },
+          "user_birthday": {
+            "type": "string",
+             "format": "date"
+          },
+          "user_gender": {
+            "type": "string"
+          },
+          "profile_img": {
+            "type": "string",
+            "format": "url"
+          }
+        }
+      }
     }
   },
-
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "in": "header",
-        "bearerFormat": "JWT"
+"ProfileUpdateRequest": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string"
+      },
+        "properties": {
+          "user_nick": {
+            "type": "string"
+          },
+          "user_email": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "user_phone": {
+            "type": "string"
+          },
+          "user_birthday": {
+            "type": "string",
+             "format": "date"
+          },
+          "user_gender": {
+            "type": "string"
+          },
+          "profile_img": {
+            "type": "string",
+            "format": "url"
+          }
+        }
+      }
+    },
+    "ProfileUpdateResponse": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "example": "사용자 정보 수정 성공"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "sign_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user_nick": {
+            "type": "string"
+          },
+          "user_email": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "user_phone": {
+            "type": "string"
+          },
+          "user_birthday": {
+            "type": "string",
+             "format": "date"
+          },
+          "user_gender": {
+            "type": "string"
+          },
+          "profile_img": {
+            "type": "string",
+            "format": "url"
+          }
+        }
+      }
+    }
+  },
+  "DiariesByDateResponse": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "응답 메시지",
+        "example": "일기 조회 성공"
+      },
+      "data": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "diary_id": {
+              "type": "integer",
+              "format": "int64",
+              "description": "일기 ID"
+            },
+            "diary_title": {
+              "type": "string",
+              "description": "일기 제목"
+            },
+            "diary_content": {
+              "type": "string",
+              "description": "일기 내용"
+            },
+            "board_id": {
+              "type": "integer",
+              "format": "int64",
+              "description": "게시판 ID"
+            }
+          },
+          "required": [
+            "diary_id",
+            "diary_title",
+            "diary_content",
+            "board_id"
+          ]
+        },
+        "description": "조회된 일기 리스트"
       }
     }
   }
+  }
+}
 }

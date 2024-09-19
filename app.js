@@ -12,6 +12,7 @@ const registerRoutes = require('./routes/register');
 const commentRoutes = require('./routes/comment'); 
 const contentRoutes = require('./routes/contents');
 const friendRoutes = require('./routes/friends');
+const mypageRoutes = require('./routes/mypage');
 
 const { sequelize } = require('./models'); // db.sequelize 객체
 app.use(cors({
@@ -48,6 +49,7 @@ app.use('/register', registerRoutes);
 app.use('/diaries', commentRoutes);
 app.use('/contents', contentRoutes);
 app.use('/friends', friendRoutes);
+app.use('/mypages', mypageRoutes);
 
 // 404 오류 처리
 app.use((req, res, next) => {
