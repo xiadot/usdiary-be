@@ -1,6 +1,10 @@
 const Diary = require('../models/diary');
 const User = require('../models/user');
 const { use } = require('../routes/diary');
+const { Op } = require('sequelize');
+const dayjs = require('dayjs');
+const Like = require('../models/like');
+const gainPoints = require('../controllers/point').gainPoints; // 포인트 획득 함수 가져오기
 
 // 좋아요 누르기
 exports.likeDiary = async (req, res) => {
@@ -12,7 +16,26 @@ exports.likeDiary = async (req, res) => {
             diary_id: req.body.diary_id
         });
 
-        req.status(201).json({
+    // 이번 주에 사용자가 누른 좋아요 수 계산
+    const startOfWeek = dayjs().startOf('week').toDate();
+    const endOfWeek = dayjs().endOf('week').toDate();
+
+    const likesThisWeek = await Like.count({
+        where: {
+            user_id: signId,
+            createdAt: {
+            [Op.between]: [startOfWeek, endOfWeek],
+            },
+        },
+    });
+
+    // 좋아요가 5개마다 1포인트 추가
+    if (likesThisWeek % 5 === 0 && likesThisWeek / 5 <= 5) {
+      // 포인트 획득 함수 호출
+        await gainPoints(req, res, '일기에 좋아요');
+        }
+
+    req.status(201).json({
             message: 'Like created successfully',
             data: createLike
         });
