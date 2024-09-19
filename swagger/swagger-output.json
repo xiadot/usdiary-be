@@ -1047,6 +1047,112 @@
         }
       }
     },
+    "/diaries/{diay_id}/likes": {
+      "post": {
+        "summary": "좋아요 생성",
+        "description": "일기에 좋아요를 누릅니다.",
+        "tags": ["Likes"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diary_id": {
+                    "type": "integer",
+                    "description": "좋아요를 누를 일기의 ID",
+                    "example": 123
+                  }
+                },
+                "required": ["diary_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "성공적으로 좋아요가 생성되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Like created successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": {
+                          "type": "integer",
+                          "description": "유저 ID"
+                        },
+                        "diary_id": {
+                          "type": "integer",
+                          "description": "일기 ID"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
+      }
+    },
+    "/diaries/{diay_id}/likes/{like_id}": {
+      "delete": {
+        "summary": "좋아요 삭제",
+        "description": "좋아요를 삭제합니다.",
+        "tags": ["Likes"],
+        "parameters": [
+          {
+            "name": "like_id",
+            "in": "path",
+            "description": "삭제할 좋아요의 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 좋아요가 삭제되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Like deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "좋아요를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
+      }
+    },
     "/diaries/{diary_id}/comments": {
     "post": {
       "summary": "댓글 생성",
@@ -2033,83 +2139,34 @@
         "security": [
           { "bearerAuth": [] }
         ]
-      },
+      }
+    },
+    "/friends/follow-request": {
       "post": {
-        "summary": "팔로잉 추가 (친구 추가)",
+        "summary": "팔로우 요청",
         "tags": ["Mooner"],
-        "description": "사용자가 다른 사용자를 팔로우(친구 추가)합니다.",
-        "parameters": [
-          {
-            "name": "sign_id",
-            "in": "path",
-            "required": true,
-            "description": "팔로우를 요청하는 사용자의 sign_id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "description": "다른 사용자에게 팔로우 요청을 보냅니다.",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AddFollowingRequest"
+                "type": "object",
+                "properties": {
+                  "requested_sign_id": {
+                    "type": "string",
+                    "description": "팔로우 요청할 사용자의 sign_id",
+                    "example": "user123"
+                  }
+                },
+                "required": ["requested_sign_id"]
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "201": {
-            "description": "성공적으로 팔로우 되었습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddFollowingResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "이미 팔로우 중인 유저입니다."
-          },
-          "500": {
-            "description": "팔로우 추가 중 오류가 발생했습니다."
-          }
-        },
-        "security": [
-          { "bearerAuth": [] }
-        ]
-      }
-    },
-    "/friends/{sign_id}/search": {
-      "get": {
-        "summary": "친구 목록에서 사용자 검색",
-        "tags": ["Mooner"],
-        "description": "사용자가 팔로우한 친구 목록에서 특정 사용자를 검색합니다.",
-        "parameters": [
-          {
-            "name": "sign_id",
-            "in": "path",
-            "required": true,
-            "description": "검색을 요청하는 사용자의 ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "search_sign_id",
-            "in": "query",
-            "required": true,
-            "description": "검색할 사용자의 ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "팔로우 목록에서 사용자를 찾았습니다.",
+            "description": "성공적으로 팔로우 요청을 보냈습니다.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2117,10 +2174,134 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "팔로우 목록에서 사용자를 찾았습니다."
+                      "example": "user123님에게 팔로우 요청을 보냈습니다."
                     },
                     "data": {
-                      "$ref": "#/components/schemas/FollowingUser"
+                      "type": "object",
+                      "properties": {
+                        "sign_id": { "type": "string", "example": "user123" },
+                        "user_nick": { "type": "string", "example": "닉네임" },
+                        "profile_img": { "type": "string", "example": "http://example.com/profile.jpg" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "이미 요청 중이거나 팔로우 상태입니다."
+          },
+          "500": {
+            "description": "팔로우 요청 중 오류 발생"
+          }
+        }
+      }
+    },
+    "/friends/follow-request/handle": {
+      "post": {
+        "summary": "팔로우 요청 처리",
+        "tags": ["Mooner"],
+        "description": "들어온 팔로우 요청을 수락하거나 거절합니다.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "follower_sign_id": {
+                    "type": "string",
+                    "description": "팔로우 요청을 보낸 사용자의 sign_id",
+                    "example": "user123"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": ["accepted", "rejected"],
+                    "description": "팔로우 요청을 수락할지 거절할지 결정",
+                    "example": "accepted"
+                  }
+                },
+                "required": ["follower_sign_id", "action"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공적으로 요청을 처리했습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "user123님의 팔로우 요청을 수락하였습니다."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "follower_sign_id": { "type": "string", "example": "user123" },
+                        "follower_user_nick": { "type": "string", "example": "닉네임" },
+                        "follower_profile_img": { "type": "string", "example": "http://example.com/profile.jpg" },
+                        "status": { "type": "string", "example": "accepted" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청입니다."
+          },
+          "404": {
+            "description": "팔로우 요청을 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "팔로우 요청 처리 중 오류 발생"
+          }
+        }
+      }
+    },
+    "/friends/{sign_id}/search": {
+      "get": {
+        "summary": "친구 목록에서 사용자 검색",
+        "tags": ["Mooner"],
+        "description": "사용자의 친구 목록에서 특정 사용자를 검색합니다.",
+        "parameters": [
+          {
+            "name": "sign_id",
+            "in": "query",
+            "required": true,
+            "description": "검색할 사용자의 sign_id",
+            "schema": {
+              "type": "string",
+              "example": "user123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "친구 목록에서 사용자를 찾았습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "친구 목록에서 사용자를 찾았습니다."
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sign_id": { "type": "string", "example": "user123" },
+                        "user_name": { "type": "string", "example": "홍길동" },
+                        "user_nick": { "type": "string", "example": "길동이" },
+                        "profile_img": { "type": "string", "example": "http://example.com/profile.jpg" }
+                      }
                     }
                   }
                 }
@@ -2128,14 +2309,16 @@
             }
           },
           "404": {
-            "description": "해당 사용자는 팔로우 목록에 없습니다."
+            "description": "해당 사용자는 친구 목록에 없습니다."
           },
           "500": {
-            "description": "친구 검색 중 오류가 발생했습니다."
+            "description": "친구 목록에서 사용자를 검색하는 중 오류가 발생했습니다."
           }
         },
         "security": [
-          { "bearerAuth": [] }
+          {
+            "bearerAuth": []
+          }
         ]
       }
     },
