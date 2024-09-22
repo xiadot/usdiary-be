@@ -1,7 +1,7 @@
 const Diary = require('../models/diary');
 const User = require('../models/user');
 const Board = require('../models/board');
-const { gainPoints } = require('../controllers/point'); // 포인트 획득 함수 불러오기
+const { gainPoints } = require('../controllers/point'); 
 const dayjs = require('dayjs');
 
 //일기 조회

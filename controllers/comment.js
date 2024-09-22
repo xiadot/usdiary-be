@@ -1,6 +1,9 @@
 const Comment = require('../models/comment');
 const Diary = require('../models/diary');
 const User = require('../models/user');
+const { Op } = require("sequelize");
+const dayjs = require("dayjs");
+const { gainPoints, getWeeklyPoints} = require('./point'); 
 
 // 댓글 작성
 exports.createComment = async (req, res) => {
@@ -14,9 +17,9 @@ exports.createComment = async (req, res) => {
         if (!diary) {
             return res.status(404).json({ message: 'Diary not found' });
         }
-         // 해당 사용자의 ID 조회
+        
+        // 해당 사용자의 ID 조회
         const user = await User.findOne({ where: { sign_id: signId } });
-
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -28,8 +31,33 @@ exports.createComment = async (req, res) => {
             diary_id: diaryId
         });
 
+        // 현재 주의 댓글 수를 계산 (월요일 ~ 일요일 기준)
+        const startOfWeek = dayjs().startOf('week').add(1, 'day').toDate();
+        const endOfWeek = dayjs().endOf('week').add(1, 'day').toDate();
+
+        const commentsThisWeek = await Comment.count({
+            where: {
+                sign_id: signId,
+                createdAt: {
+                    [Op.between]: [startOfWeek, endOfWeek],
+                },
+            },
+        });
+
+        // 3개 댓글마다 1포인트, 최대 5포인트 제한
+        const earnedPoints = Math.floor(commentsThisWeek / 3);
+        const maxWeeklyPoints = 5;
+
+        if (earnedPoints > 0) {
+            const currentWeekPoints = await getWeeklyPoints(signId);
+            const pointsToAdd = Math.min(earnedPoints, maxWeeklyPoints - currentWeekPoints);
+
+            if (pointsToAdd > 0) {
+                await gainPoints(req, res, '일기에 댓글', pointsToAdd);
+            }
+        }
         // 생성된 댓글 반환
-        res.status(201).json( {message: '댓글이 성공적으로 생성되었습니다.',data: {comment}});
+        res.status(201).json({ message: '댓글이 성공적으로 생성되었습니다.', data: { comment } });
     } catch (error) {
         console.error('Error creating comment:', error);
         res.status(500).json({ message: 'Server error', error });

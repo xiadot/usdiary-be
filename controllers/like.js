@@ -16,25 +16,32 @@ exports.likeDiary = async (req, res) => {
             diary_id: req.body.diary_id
         });
 
-    // 이번 주에 사용자가 누른 좋아요 수 계산
-    const startOfWeek = dayjs().startOf('week').toDate();
-    const endOfWeek = dayjs().endOf('week').toDate();
+        const startOfWeek = dayjs().startOf('week').add(1, 'day').toDate();
+        const endOfWeek = dayjs().endOf('week').add(1, 'day').toDate();
 
-    const likesThisWeek = await Like.count({
-        where: {
-            user_id: signId,
-            createdAt: {
-            [Op.between]: [startOfWeek, endOfWeek],
+        // 이번 주에 사용자가 누른 좋아요 수 계산
+        const likesThisWeek = await Like.count({
+            where: {
+                user_id: signId,
+                createdAt: {
+                    [Op.between]: [startOfWeek, endOfWeek],
+                },
             },
-        },
-    });
+        });
 
-    // 좋아요가 5개마다 1포인트 추가
-    if (likesThisWeek % 5 === 0 && likesThisWeek / 5 <= 5) {
-      // 포인트 획득 함수 호출
-        await gainPoints(req, res, '일기에 좋아요');
+        // 5개의 좋아요마다 1포인트 추가, 최대 5포인트 제한
+        const earnedPoints = Math.floor(likesThisWeek / 5);
+        const maxWeeklyPoints = 5;
+
+        if (earnedPoints > 0) {
+            const currentWeekPoints = await getWeeklyPoints(signId); 
+            const pointsToAdd = Math.min(earnedPoints, maxWeeklyPoints - currentWeekPoints);
+
+            if (pointsToAdd > 0) {
+                await gainPoints(req, res, '일기에 좋아요', pointsToAdd);
+            }
         }
-
+        
     req.status(201).json({
             message: 'Like created successfully',
             data: createLike
