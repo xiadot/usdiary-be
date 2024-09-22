@@ -1,6 +1,7 @@
 const Comment = require('../models/comment');
 const Diary = require('../models/diary');
 const User = require('../models/user');
+const Profile = require('../models/profile');
 const { Op } = require("sequelize");
 const dayjs = require("dayjs");
 const { gainPoints, getWeeklyPoints} = require('./point'); 
@@ -172,15 +173,15 @@ exports.deleteComment = async (req, res) => {
         }
     });
 
-      if (!comment) {
-          return res.status(404).json({ message: 'Comment not found' });
-      }
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
 
-      await comment.destroy();
+        await comment.destroy();
 
-      return res.status(200).json({ message: 'Comment deleted successfully' });
-  } catch (error) {
-      console.error('Error deleting comment:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-  }
+        return res.status(200).json({ message: 'Comment deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 };
