@@ -1,4 +1,6 @@
 const PointCriteria = require('../models/point_criteria');
+const { Op } = require("sequelize");
+const dayjs = require("dayjs");
 
 // 포인트 획득 및 차감 기준 등록
 exports.createPointCriteria = async (req, res) => {
@@ -75,14 +77,14 @@ exports.deletePointCriteria = async (req, res) => {
 };
 
 // 포인트 획득 함수
-exports.gainPoints = async (req, res, activity) => {
+exports.gainPoints = async (req, res, activity, pointsEarned = null) => {
   try {
     const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
     // 포인트 기준 테이블에서 해당 활동에 대한 포인트 기준을 찾음
     const criteria = await PointCriteria.findOne({ where: { content: activity } });
 
-    if (!criteria) {
+    if (!criteria && pointsEarned === null) {
       return res.status(404).json({
         status: 404,
         message: '해당 활동에 대한 포인트 기준이 없습니다.',
@@ -100,15 +102,16 @@ exports.gainPoints = async (req, res, activity) => {
       });
     }
 
-    // 기존 포인트에 기준에 따라 포인트 추가
-    user.user_point += criteria.points;
+    // 기존 포인트에 기준에 따라 포인트 추가, pointsEarned가 주어진 경우 이를 사용
+    const pointsToAdd = pointsEarned !== null ? pointsEarned : criteria.points;
+    user.user_point += pointsToAdd;
 
     // 변경된 포인트 저장
     await user.save();
 
     return res.status(200).json({
       status: 200,
-      message: `${criteria.points}점 획득했습니다.`,
+      message: `${pointsToAdd}점 획득했습니다.`,
       data: {
         points: user.user_point,
       },
@@ -170,4 +173,23 @@ exports.deductPoints = async (req, res, activity) => {
       data: null,
     });
   }
+};
+
+// 해당 주(월요일~일요일)에 사용자가 획득한 포인트를 계산하는 함수
+exports.getWeeklyPoints = async (signId) => {
+  const today = dayjs();
+  
+  const startOfWeek = today.startOf('week').add(1, 'day').toDate(); 
+  const endOfWeek = today.endOf('week').add(1, 'day').toDate();
+
+  const pointsThisWeek = await Point.sum('point_num', {
+    where: {
+      user_id: signId, 
+      createdAt: {
+        [Op.between]: [startOfWeek, endOfWeek],
+      },
+    },
+  });
+
+  return pointsThisWeek || 0;
 };
