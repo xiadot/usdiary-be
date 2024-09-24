@@ -618,6 +618,146 @@
         }
       }
     },
+    "/systems/reports": {
+      "post": {
+        "summary": "신고 생성",
+        "description": "유저가 다이어리 및 댓글에 대한 신고를 생성합니다.",
+        "tags": ["Report"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diary_id": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "신고할 다이어리 ID"
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "example": 10,
+                    "description": "신고할 댓글 ID (선택 사항)"
+                  },
+                  "report_type": {
+                    "type": "string",
+                    "example": "스팸",
+                    "description": "신고 유형"
+                  },
+                  "report_reason": {
+                    "type": "string",
+                    "example": "광고성 메시지입니 다.",
+                    "description": "신고 이유 (선택 사항)"
+                  }
+                },
+                "required": ["diary_id", "report_type"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "신고가 성공적으로 생성되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Report created successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "report_id": {
+                          "type": "integer",
+                          "example": 123,
+                          "description": "생성된 신고의 ID"
+                        },
+                        "reporter_id": {
+                          "type": "integer",
+                          "example": 1,
+                          "description": "신고한 유저의 ID"
+                        },
+                        "reported_id": {
+                          "type": "integer",
+                          "example": 2,
+                          "description": "신고당한 유저의 ID"
+                        },
+                        "diary_id": {
+                          "type": "integer",
+                          "example": 1,
+                          "description": "신고된 다이어리의 ID"
+                        },
+                        "comment_id": {
+                          "type": "integer",
+                          "example": 10,
+                          "description": "신고된 댓글의 ID"
+                        },
+                        "report_type": {
+                          "type": "string",
+                          "example": "스팸",
+                          "description": "신고 유형"
+                        },
+                        "report_reason": {
+                          "type": "string",
+                          "example": "광고성 메시지입니다.",
+                          "description": "신고 이유"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-09-24T12:34:56Z",
+                          "description": "신고 생성 시간"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "다이어리 또는 댓글을 찾을 수 없습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Diary not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "신고 생성 중 서버 오류가 발생했습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "An error occurred while creating the Report"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },    
     "/comments/{diary_id}/comments": {
       "get": {
         "summary": "댓글 조회",
