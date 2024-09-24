@@ -19,6 +19,7 @@ const Point = require("./point");
 const Profile = require("./profile");
 const QnA = require("./qna");
 const Answer = require("./anwer");
+const Report = require("./report");
 
 
 const db = {};
@@ -41,7 +42,7 @@ db.Point = Point;
 db.Profile = Profile;
 db.QnA = QnA;
 db.Answer = Answer;
-
+db.Report = Report;
 
 
 User.initiate(sequelize)
@@ -60,7 +61,7 @@ Point.initiate(sequelize);
 Profile.initiate(sequelize);
 QnA.initiate(sequelize);
 Answer.initiate(sequelize);
-
+Report.initiate(sequelize);
 
 
 db.sequelize = sequelize;
@@ -81,7 +82,7 @@ Point.associate(db)
 Profile.associate(db)
 QnA.associate(db)
 Answer.associate(db)
-
+Report.associate(db)
 
 
 

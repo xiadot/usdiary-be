@@ -97,6 +97,10 @@ class User extends Sequelize.Model {
       db.User.belongsToMany(db.User, {through: db.Friend, foreignKey: 'follower_id', as: 'Following',otherKey: 'following_id'});
       // 이 유저를 팔로우하는 유저들 (팔로워 관계)
       db.User.belongsToMany(db.User, { through: db.Friend, foreignKey: 'following_id',as: 'Followers',otherKey: 'follower_id', });
+      // 유저가 여러 번 신고할 수 있음 (Reporter)
+      db.User.hasMany(db.Report, { foreignKey: "reporter_id", sourceKey: "user_id", onDelete: "CASCADE" });
+      // 유저가 여러 번 신고당할 수 있음 (Reported)
+      db.User.hasMany(db.Report, { foreignKey: "reported_id", sourceKey: "user_id", onDelete: "CASCADE" });
     }
 
     
