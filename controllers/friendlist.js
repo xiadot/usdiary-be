@@ -2,6 +2,8 @@ const Friend = require('../models/friend');
 const User = require('../models/user');
 const Diary = require('../models/diary');
 const Profile = require('../models/profile');
+const { gainPoints } = require('./point'); 
+
 // 맞팔 관계
 exports.getFriends = async (req, res) => {
     try {
@@ -23,6 +25,15 @@ exports.getFriends = async (req, res) => {
         const friends = following
             .map(f => f.following_sign_id)
             .filter(followingId => followers.some(f => f.follower_sign_id  === followingId));
+
+        // 친구 수 계산
+        const friendCount = friends.length;
+
+        // 5명당 2포인트 획득
+        const pointsToAdd = Math.floor(friendCount / 5) * 2;
+        if (pointsToAdd > 0) {
+            await gainPoints(req, res, '서로 무너 관계 맺기', pointsToAdd);
+        }
 
         // 친구 목록에 해당하는 유저 정보 조회
         const friendUsers = await User.findAll({

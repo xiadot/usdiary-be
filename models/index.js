@@ -18,7 +18,8 @@ const Notification = require("./notification");
 const Point = require("./point");
 const Profile = require("./profile");
 const QnA = require("./qna");
-const Answer = require("./anwer");
+const Answer = require("./answer");
+const PointCriteria = require('./point_criteria');
 const Report = require("./report");
 
 
@@ -39,6 +40,7 @@ db.Friend = Friend;
 db.Like = Like;
 db.Notification = Notification;
 db.Point = Point;
+db.PointCriteria = PointCriteria;
 db.Profile = Profile;
 db.QnA = QnA;
 db.Answer = Answer;
@@ -58,6 +60,7 @@ Like.initiate(sequelize);
 Notification.initiate(sequelize);
 Admin.initiate(sequelize);
 Point.initiate(sequelize);
+PointCriteria.initiate(sequelize);
 Profile.initiate(sequelize);
 QnA.initiate(sequelize);
 Answer.initiate(sequelize);
