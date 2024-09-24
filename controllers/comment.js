@@ -99,9 +99,14 @@ exports.updateComment = async (req, res) => {
 };
 
 // 댓글 조회 
+// 댓글 조회 
 exports.renderComments = async (req, res) => {
     try {
         const diaryId = req.params.diary_id;
+        const commentId = req.params.comment_id; // 특정 댓글 ID 가져오기
+        const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
+
+        let comments;
         const commentId = req.params.comment_id; // 특정 댓글 ID 가져오기
         const signId = res.locals.decoded.sign_id; // JWT에서 사용자 sign_id 가져오기
 
@@ -146,7 +151,49 @@ exports.renderComments = async (req, res) => {
                 ],
                 order: [['createdAt', 'ASC']]
             });
+        if (commentId) {
+            // 특정 댓글 조회
+            comments = await Comment.findOne({
+                where: { diary_id: diaryId, id: commentId },
+                include: [
+                    { 
+                        model: User, 
+                        attributes: ['sign_id', 'user_nick'],
+                        include: [
+                            {
+                                model: Profile, 
+                                attributes: ['profile_img']
+                            }
+                        ]
+                    },
+                ],
+            });
+            
+            if (!comments) {
+                return res.status(404).json({ message: 'Comment not found' });
+            }
+        } else {
+            // 해당 일기에 대한 모든 댓글을 조회
+            comments = await Comment.findAll({
+                where: { diary_id: diaryId },
+                include: [
+                    { 
+                        model: User, 
+                        attributes: ['sign_id', 'user_nick'],
+                        include: [
+                            {
+                                model: Profile, 
+                                attributes: ['profile_img'] 
+                            }
+                        ]
+                    },
+                ],
+                order: [['createdAt', 'ASC']]
+            });
 
+            if (!comments || comments.length === 0) {
+                return res.status(404).json({ message: 'No comments found' });
+            }
             if (!comments || comments.length === 0) {
                 return res.status(404).json({ message: 'No comments found' });
             }
