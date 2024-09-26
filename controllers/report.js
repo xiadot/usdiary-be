@@ -7,7 +7,7 @@ const { deductPoints } = require('./point');
 // 신고하기
 exports.createReport = async (req, res) => {
     try {
-        const signId = res.locals.decoded.sign_id; // 유저 아이디 가져오기
+        const signId = res.locals.decoded.sign_id; // JWT에서 sign_id 가져오기
         const { diary_id, comment_id, report_type, report_reason, is_false_report } = req.body;
 
         // 신고된 다이어리 정보 가져오기
@@ -17,22 +17,22 @@ exports.createReport = async (req, res) => {
             return res.status(404).json({ error: 'Diary not found' });
         }
 
-        const reportedUserId = diary.sign_id; // 다이어리 작성자의 유저 ID
+        const reportedUserSignId = diary.sign_id; // 다이어리 작성자의 sign_id
 
         // 신고된 댓글 정보 가져오기
-        let commentAuthorId = null;
+        let commentAuthorSignId = null;
         if (comment_id) {
             const comment = await Comment.findOne({ where: { comment_id: comment_id } });
             if (!comment) {
                 return res.status(404).json({ error: 'Comment not found' });
             }
-            commentAuthorId = comment.sign_id; // 댓글 작성자의 유저 ID
+            commentAuthorSignId = comment.sign_id; // 댓글 작성자의 sign_id
         }
 
         // 신고 생성
         const createReport = await Report.create({
-            reporter_id: signId,     // 신고한 유저 ID
-            reported_id: reportedUserId, // 신고당한 유저 ID (다이어리 작성자)
+            reporter_id: signId,     // 신고한 유저의 sign_id
+            reported_id: reportedUserSignId, // 신고당한 유저의 sign_id
             diary_id: diary_id,      // 신고된 다이어리 ID
             comment_id: comment_id || null, // 신고된 댓글 ID
             report_type: report_type, // 신고 유형
@@ -44,7 +44,7 @@ exports.createReport = async (req, res) => {
             await deductPoints(req, res, '허위 신고', 10);
         } else {
             // 신고당한 유저의 ban_count 증가
-            const reportedUser = await User.findOne({ where: { user_id: reportedUserId } });
+            const reportedUser = await User.findOne({ where: { sign_id: reportedUserSignId } });
             if (reportedUser) {
                 await reportedUser.increment('ban_count', { by: 1 }); // ban_count 1 증가
 
@@ -58,8 +58,8 @@ exports.createReport = async (req, res) => {
             }
 
             // 댓글이 신고된 경우 댓글 작성자의 5포인트 차감
-            if (commentAuthorId) {
-                const commentAuthor = await User.findOne({ where: { sign_id: commentAuthorId } });
+            if (commentAuthorSignId) {
+                const commentAuthor = await User.findOne({ where: { sign_id: commentAuthorSignId } });
                 if (commentAuthor) {
                     await deductPoints(req, res, '댓글 신고', 5);
                 }
