@@ -658,7 +658,7 @@
     "/systems/reports": {
       "post": {
         "summary": "신고 생성",
-        "description": "유저가 다이어리 및 댓글에 대한 신고를 생성합니다.",
+        "description": "유저가 다이어리 및 댓글에 대한 신고를 생성합니다. 허위 신고 시 신고한 유저는 10포인트가 차감됩니다.",
         "tags": ["Report"],
         "requestBody": {
           "required": true,
@@ -684,8 +684,13 @@
                   },
                   "report_reason": {
                     "type": "string",
-                    "example": "광고성 메시지입니 다.",
+                    "example": "광고성 메시지입니다.",
                     "description": "신고 이유 (선택 사항)"
+                  },
+                  "is_false_report": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "허위 신고 여부 (허위 신고 시 true로 설정)"
                   }
                 },
                 "required": ["diary_id", "report_type"]
@@ -714,14 +719,14 @@
                           "description": "생성된 신고의 ID"
                         },
                         "reporter_id": {
-                          "type": "integer",
-                          "example": 1,
-                          "description": "신고한 유저의 ID"
+                          "type": "string",
+                          "example": "user123",
+                          "description": "신고한 유저의 sign_id"
                         },
                         "reported_id": {
-                          "type": "integer",
-                          "example": 2,
-                          "description": "신고당한 유저의 ID"
+                          "type": "string",
+                          "example": "user456",
+                          "description": "신고당한 유저의 sign_id"
                         },
                         "diary_id": {
                           "type": "integer",
@@ -743,6 +748,11 @@
                           "example": "광고성 메시지입니다.",
                           "description": "신고 이유"
                         },
+                        "is_false_report": {
+                          "type": "boolean",
+                          "example": false,
+                          "description": "허위 신고 여부"
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time",
@@ -757,44 +767,14 @@
             }
           },
           "404": {
-            "description": "다이어리 또는 댓글을 찾을 수 없습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Diary not found"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Diary or Comment not found"
           },
           "500": {
-            "description": "신고 생성 중 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "An error occurred while creating the Report"
-                    },
-                    "error": {
-                      "type": "string",
-                      "example": "Internal Server Error"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
-    },    
+    },
     "/comments/{diary_id}/comments": {
       "get": {
         "summary": "댓글 조회",
